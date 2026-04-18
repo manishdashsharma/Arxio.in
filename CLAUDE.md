@@ -139,7 +139,7 @@ server/
 │   ├── services/
 │   │   ├── ai/
 │   │   │   ├── groq_client.py     # Llama 3.3 70B — Free / Student plans
-│   │   │   ├── claude_client.py   # Claude Haiku 3.5 — Pro / Scholar plans
+│   │   │   ├── openai_client.py   # GPT-4o — Pro / Scholar plans
 │   │   │   └── router.py          # Route to correct client based on user plan
 │   │   ├── pdf_processor.py       # PyMuPDF + pdfplumber — text, tables, equations
 │   │   ├── search.py              # Tavily (web) + NewsAPI
@@ -391,8 +391,8 @@ class EPlanTier(str, Enum):
 AI_ROUTING = {
     EPlanTier.FREE:    "groq",
     EPlanTier.STUDENT: "groq",
-    EPlanTier.PRO:     "claude",
-    EPlanTier.SCHOLAR: "claude",
+    EPlanTier.PRO:     "openai",
+    EPlanTier.SCHOLAR: "openai",
 }
 ```
 

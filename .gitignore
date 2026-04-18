@@ -1,0 +1,11 @@
+uploads/*
+!uploads/.gitkeep
+generated/*
+!generated/.gitkeep
+**/__pycache__/
+**/*.pyc
+.env
+*.egg-info/
+.venv/
+node_modules/
+.next/
