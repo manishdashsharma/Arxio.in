@@ -1,5 +1,8 @@
+import ssl
 from celery import Celery
 from app.core.config import settings
+
+_is_tls = settings.redis_url.startswith("rediss://")
 
 celery_app = Celery(
     "arxio",
@@ -19,3 +22,9 @@ celery_app.conf.update(
     worker_prefetch_multiplier=1,
     result_expires=86400,
 )
+
+if _is_tls:
+    celery_app.conf.update(
+        broker_use_ssl={"ssl_cert_reqs": ssl.CERT_NONE},
+        redis_backend_use_ssl={"ssl_cert_reqs": ssl.CERT_NONE},
+    )

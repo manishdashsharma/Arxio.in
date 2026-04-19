@@ -5,6 +5,12 @@ set -e
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 MODE="${1:-}"
 
+if [ -f "$ROOT/server/.env" ]; then
+  set -a
+  source "$ROOT/server/.env"
+  set +a
+fi
+
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -21,13 +27,20 @@ usage() {
   echo ""
   echo -e "${BOLD}Usage:${NC}"
   echo "  ./start.sh --server     FastAPI + Celery worker"
-  echo "  ./start.sh --client     Next.js dev server"
+  echo "  ./start.sh --client     Next.js dev server (landing page)"
+  echo "  ./start.sh --app        Vite dev server (application)"
   echo "  ./start.sh --all        Everything"
   echo ""
   exit 0
 }
 
 start_docker() {
+  local redis_url="${REDIS_URL:-}"
+  if [[ "$redis_url" == rediss://* ]] || [[ "$redis_url" == redis://*upstash* ]]; then
+    ok "Redis → Upstash (skipping Docker)"
+    return
+  fi
+
   log "Checking Docker..."
   if ! docker info > /dev/null 2>&1; then
     die "Docker is not running. Start Docker Desktop and try again."
@@ -63,7 +76,7 @@ start_server() {
 }
 
 start_client() {
-  log "Starting Next.js client..."
+  log "Starting Next.js client (landing page)..."
   cd "$ROOT/client"
   if [ ! -d "node_modules" ]; then
     warn "node_modules not found — running npm install..."
@@ -76,10 +89,24 @@ start_client() {
   wait $CLIENT_PID
 }
 
+start_app() {
+  log "Starting Vite app (application)..."
+  cd "$ROOT/app"
+  if [ ! -d "node_modules" ]; then
+    warn "node_modules not found — running npm install..."
+    npm install
+  fi
+  npm run dev &
+  APP_PID=$!
+  ok "Vite running (pid $APP_PID) → http://localhost:5173"
+
+  wait $APP_PID
+}
+
 cleanup() {
   echo ""
   warn "Shutting down..."
-  pkill -f "uvicorn|celery|next dev" 2>/dev/null || true
+  pkill -f "uvicorn|celery|next dev|vite" 2>/dev/null || true
   docker compose -f "$ROOT/docker-compose.dev.yml" stop 2>/dev/null || true
   ok "All stopped."
 }
@@ -94,10 +121,14 @@ case "$MODE" in
   --client)
     start_client
     ;;
+  --app)
+    start_app
+    ;;
   --all)
     start_docker
     start_server &
-    start_client
+    start_client &
+    start_app
     ;;
   --help | -h | "")
     usage
