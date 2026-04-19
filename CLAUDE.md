@@ -2,7 +2,7 @@
 
 > Ideology: Drishti — दृष्टि — Vision. Clarity. Insight.
 > Domain: arxio.in
-> Stack: Next.js 14 (client) + Python FastAPI (server)
+> Stack: Next.js 14 (client/landing page) + Vite + React (app/application) + Python FastAPI (server)
 > You are acting as a senior engineer, systems architect, and product designer.
 > Think in systems. Think in user journeys. Think in tradeoffs.
 
@@ -27,10 +27,11 @@ Every technical decision must serve that magic moment. If a feature does not mak
 
 ```
 arxio/
-├── client/                        # Next.js 14 + TypeScript + Tailwind
+├── client/                        # Next.js 14 + TypeScript + Tailwind — landing page only (SSR, SEO)
+├── app/                           # Vite + React + TypeScript + Tailwind — full application (dashboard, workspace, library, all auth screens)
 ├── server/                        # Python 3.12 + FastAPI + UV
 ├── docs/                          # PRD and planning docs
-├── sessions/                      # Daily session context (YYYY-MM-DD.md)
+├── sessions/                      # Daily session context (YYYY-MM-DD.md) — gitignored
 ├── docker-compose.yml             # Local dev + production
 └── CLAUDE.md                      # This file
 ```
