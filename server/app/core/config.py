@@ -29,6 +29,8 @@ class Settings(BaseSettings):
 
     subscription_access_key: str = ""
 
+    cors_origins: list[str] = ["http://localhost:3000", "http://localhost:5173"]
+
     cloudflare_r2_access_key: str = ""
     cloudflare_r2_secret_key: str = ""
     cloudflare_r2_bucket: str = ""
