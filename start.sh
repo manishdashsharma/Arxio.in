@@ -63,12 +63,35 @@ start_docker() {
 start_server() {
   log "Starting FastAPI server..."
   cd "$ROOT/server"
-  uv run python main.py &
+  if command -v uv >/dev/null 2>&1; then
+    uv run python main.py &
+  elif [ -x "$ROOT/server/.venv/bin/python" ]; then
+    if ! "$ROOT/server/.venv/bin/python" -c "import uvicorn, celery" >/dev/null 2>&1; then
+      die "Python deps missing in server/.venv. Run: cd server && ./.venv/bin/pip install -e ."
+    fi
+    "$ROOT/server/.venv/bin/python" -m uvicorn main:app --reload --host 0.0.0.0 --port "${PORT:-8000}" &
+  elif [ -x "$ROOT/.venv/bin/python" ]; then
+    if ! "$ROOT/.venv/bin/python" -c "import uvicorn, celery" >/dev/null 2>&1; then
+      die "Python deps missing in .venv. Run: cd \"$ROOT\" && ./.venv/bin/pip install -e ./server"
+    fi
+    "$ROOT/.venv/bin/python" -m uvicorn main:app --reload --host 0.0.0.0 --port "${PORT:-8000}" &
+  else
+    if ! python3 -c "import uvicorn, celery" >/dev/null 2>&1; then
+      die "Python deps missing. Run: cd server && python3 -m pip install -e ."
+    fi
+    python3 -m uvicorn main:app --reload --host 0.0.0.0 --port "${PORT:-8000}" &
+  fi
   SERVER_PID=$!
   ok "FastAPI running (pid $SERVER_PID) → http://localhost:8000"
 
   log "Starting Celery worker..."
-  uv run celery -A app.workers.celery_app worker --loglevel=info &
+  if command -v uv >/dev/null 2>&1; then
+    uv run celery -A app.workers.celery_app worker --loglevel=info &
+  elif [ -x "$ROOT/server/.venv/bin/celery" ]; then
+    "$ROOT/server/.venv/bin/celery" -A app.workers.celery_app worker --loglevel=info &
+  else
+    python3 -m celery -A app.workers.celery_app worker --loglevel=info &
+  fi
   CELERY_PID=$!
   ok "Celery running (pid $CELERY_PID)"
 
@@ -82,7 +105,7 @@ start_client() {
     warn "node_modules not found — running npm install..."
     npm install
   fi
-  npm run dev &
+  PORT=3000 npm run dev &
   CLIENT_PID=$!
   ok "Next.js running (pid $CLIENT_PID) → http://localhost:3000"
 

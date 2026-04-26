@@ -1,1 +1,39 @@
 @import "tailwindcss";
+
+@theme {
+  --color-arxio-bg: #0b1326;
+  --color-arxio-surface-lowest: #060e20;
+  --color-arxio-surface-low: #131b2e;
+  --color-arxio-surface-container: #171f33;
+  --color-arxio-surface-container-high: #222a3d;
+  --color-arxio-surface-container-highest: #2d3449;
+  --color-arxio-primary: #b4c5ff;
+  --color-arxio-primary-container: #0f62fe;
+  --color-arxio-inverse-primary: #0052dd;
+  --color-arxio-on-surface: #dae2fd;
+  --color-arxio-on-surface-variant: #c3c6d8;
+  --color-arxio-outline-variant: #424656;
+  --color-arxio-tertiary: #7bd0ff;
+  --color-arxio-tertiary-container: #0078a2;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer utilities {
+  .arxio-glass {
+    background: rgba(23, 31, 51, 0.6);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(195, 198, 216, 0.2);
+  }
+  .arxio-active-tab-glow {
+    box-shadow: 0 0 15px rgba(15, 98, 254, 0.15);
+  }
+  .arxio-header-shadow {
+    box-shadow: 0 40px 40px -5px rgba(0, 0, 0, 0.4);
+  }
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-arxio-bg);
+  color: var(--color-arxio-on-surface);
+}

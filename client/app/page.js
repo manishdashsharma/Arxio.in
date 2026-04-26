@@ -1,763 +1,476 @@
-"use client";
-
-import { motion, useInView, AnimatePresence } from "framer-motion";
-import { useRef, useState, useEffect, createContext, useContext } from "react";
 import Link from "next/link";
-import { PLANS_DATA } from "./lib/data";
 import { LogoWordmark } from "./components/Logo";
-import ComingSoonModal from "./components/ComingSoonModal";
+import { PLANS_DATA } from "./lib/data";
 
-const ModalCtx = createContext(() => {});
-
-function CTAButton({ children, className }) {
-  const open = useContext(ModalCtx);
-  return <button onClick={open} className={className}>{children}</button>;
-}
-
-function IconCheck({ size = 16, className = "" }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 16 16" fill="none" className={className}>
-      <path d="M3 8l3.5 3.5L13 4.5" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function IconArrow({ size = 16 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 16 16" fill="none">
-      <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function IconMenu() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-      <path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function IconClose() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-      <path d="M4 4l12 12M16 4L4 16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function FadeIn({ children, delay = 0, className = "" }) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-60px" });
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 24 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.65, delay, ease: [0.22, 1, 0.36, 1] }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
-const STEPS = [
-  { label: "Reading your paper...", pct: 20 },
-  { label: "Extracting text and tables...", pct: 35 },
-  { label: "AI is reading the full paper...", pct: 55 },
-  { label: "Building your presentation...", pct: 75 },
-  { label: "Generating cheat sheet...", pct: 88 },
-  { label: "Your workspace is ready", pct: 100 },
+const JOURNEY_STEPS = [
+  {
+    title: "Upload the paper",
+    description: "Drop your PDF. Arxio reads every section, table, and key finding.",
+  },
+  {
+    title: "Get a complete workspace",
+    description: "Overview, key terms, methodology, results, critical analysis, and chat-ready context.",
+  },
+  {
+    title: "Present with confidence",
+    description: "Download slides, revise the cheat sheet, practice with Q&A prep, and walk in prepared.",
+  },
 ];
 
-const OUTPUTS = ["15 Slides", "Cheat Sheet", "Q&A Prep", "Flashcards", "AI Chat", "Script"];
+const OUTPUTS = [
+  "15-slide presentation",
+  "5-slide quick pitch",
+  "Cheat sheet",
+  "Q&A prep",
+  "Presentation script",
+  "Flashcards",
+];
 
-function HeroCard() {
-  const [phase, setPhase] = useState("processing");
-  const [stepIdx, setStepIdx] = useState(0);
+const PROOF = [
+  { value: "10 min", label: "average generation" },
+  { value: "15 slides", label: "ready-to-present deck" },
+  { value: "3 clicks", label: "upload to workspace" },
+];
 
-  useEffect(() => {
-    if (phase === "processing") {
-      if (stepIdx < STEPS.length - 1) {
-        const t = setTimeout(() => setStepIdx((i) => i + 1), 950);
-        return () => clearTimeout(t);
-      }
-      const t = setTimeout(() => setPhase("done"), 1000);
-      return () => clearTimeout(t);
-    }
-    const t = setTimeout(() => {
-      setPhase("processing");
-      setStepIdx(0);
-    }, 3800);
-    return () => clearTimeout(t);
-  }, [phase, stepIdx]);
+const USERS = [
+  {
+    role: "Students",
+    pain: "Night-before presentation panic",
+    gain: "Upload at 11 PM, present at 9 AM with confidence.",
+  },
+  {
+    role: "Researchers",
+    pain: "Long papers with fragmented notes",
+    gain: "One structured workspace with summaries and critical insights.",
+  },
+  {
+    role: "Scholars",
+    pain: "Citation-heavy, high-stakes work",
+    gain: "Scholar plan unlocks deeper research workflows and RAG-ready direction.",
+  },
+];
 
-  const current = STEPS[stepIdx];
+const NIGHT_BEFORE = [
+  { time: "10:00 PM", without: "Open 50-page paper, feel overwhelmed", withArxio: "Upload the paper to Arxio" },
+  { time: "10:30 PM", without: "Still decoding jargon and equations", withArxio: "AI extracts key concepts and methodology" },
+  { time: "11:15 PM", without: "Random notes, no structure", withArxio: "Slides, cheat sheet, and Q&A are ready" },
+  { time: "12:00 AM", without: "Still building slides manually", withArxio: "Rehearse with script and flashcards" },
+  { time: "09:00 AM", without: "Present with uncertainty", withArxio: "Present with confidence" },
+];
 
+const FIRST_LOOK = [
+  {
+    title: "Upload screen clarity",
+    subtitle: "One action. Zero confusion.",
+    bullets: ["Large drop zone", "File checks in 1 second", "Single generate button"],
+    tone: "from-brand/20 to-brand/5",
+  },
+  {
+    title: "Live progress experience",
+    subtitle: "No blank waiting state.",
+    bullets: ["Step-by-step status", "Visible progress bar", "Clear finish signal"],
+    tone: "from-[#16a34a]/20 to-[#16a34a]/5",
+  },
+  {
+    title: "Workspace confidence",
+    subtitle: "Everything in one place.",
+    bullets: ["Outputs sidebar", "Inline preview pane", "Chat + download controls"],
+    tone: "from-[#7c3aed]/20 to-[#7c3aed]/5",
+  },
+];
+
+function CheckIcon() {
   return (
-    <div className="relative w-full max-w-100 mx-auto">
-      <div className="absolute inset-0 bg-brand/15 blur-3xl rounded-3xl scale-90 translate-y-6" />
-      <motion.div
-        initial={{ opacity: 0, y: 24, scale: 0.96 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className="relative bg-white rounded-2xl border border-border shadow-2xl shadow-brand/10 p-6 overflow-hidden"
-      >
-        <div className="flex items-center gap-1.5 mb-5">
-          <span className="w-3 h-3 rounded-full bg-[#fc635d]" />
-          <span className="w-3 h-3 rounded-full bg-[#fdbc40]" />
-          <span className="w-3 h-3 rounded-full bg-[#34c749]" />
-          <span className="ml-auto text-[11px] text-subtle font-mono">arxio.in</span>
-        </div>
-
-        <div className="flex items-start gap-3 mb-5 p-3 bg-surface rounded-xl border border-border">
-          <div className="w-9 h-11 bg-brand-light rounded-lg flex items-center justify-center shrink-0 border border-brand-muted">
-            <svg width="16" height="20" viewBox="0 0 16 20" fill="none">
-              <path d="M2 2h8l4 4v12a1 1 0 01-1 1H2a1 1 0 01-1-1V3a1 1 0 012-1z" stroke="#2563eb" strokeWidth="1.5" fill="none" />
-              <path d="M10 2v4h4" stroke="#2563eb" strokeWidth="1.5" strokeLinecap="round" />
-              <path d="M4 9h8M4 12h6M4 15h4" stroke="#93c5fd" strokeWidth="1.2" strokeLinecap="round" />
-            </svg>
-          </div>
-          <div className="min-w-0">
-            <p className="text-[13px] font-semibold text-ink truncate">lane_detection_vilds.pdf</p>
-            <p className="text-[11px] text-subtle mt-0.5">48 pages · 2.1 MB</p>
-          </div>
-        </div>
-
-        <AnimatePresence mode="wait">
-          {phase === "processing" ? (
-            <motion.div
-              key="proc"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.25 }}
-            >
-              <div className="mb-4">
-                <div className="flex justify-between items-center mb-1.5">
-                  <span className="text-[11px] font-medium text-muted">{current.label}</span>
-                  <span className="text-[11px] font-bold text-brand">{current.pct}%</span>
-                </div>
-                <div className="h-1.5 bg-surface rounded-full overflow-hidden">
-                  <motion.div
-                    className="h-full bg-brand rounded-full"
-                    animate={{ width: `${current.pct}%` }}
-                    transition={{ duration: 0.55, ease: "easeOut" }}
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                {STEPS.slice(0, Math.min(stepIdx + 1, 5)).map((s, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, x: -6 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.25 }}
-                    className="flex items-center gap-2"
-                  >
-                    <div
-                      className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 ${
-                        i < stepIdx
-                          ? "bg-[#dcfce7] text-[#16a34a]"
-                          : "bg-brand-light"
-                      }`}
-                    >
-                      {i < stepIdx ? (
-                        <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                          <path d="M2 5l2.5 2.5L8 3" stroke="#16a34a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      ) : (
-                        <motion.span
-                          animate={{ rotate: 360 }}
-                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                          className="block w-2.5 h-2.5 border-2 border-brand border-t-transparent rounded-full"
-                        />
-                      )}
-                    </div>
-                    <span className={`text-[11px] ${i <= stepIdx ? "text-ink" : "text-subtle"}`}>{s.label}</span>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="done"
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-6 h-6 bg-[#dcfce7] rounded-full flex items-center justify-center">
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                    <path d="M2 6l3 3 5-5" stroke="#16a34a" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </div>
-                <span className="text-sm font-semibold text-ink">Workspace ready</span>
-                <span className="text-[11px] text-subtle ml-auto">8m 42s</span>
-              </div>
-              <div className="grid grid-cols-3 gap-2">
-                {OUTPUTS.map((o, i) => (
-                  <motion.div
-                    key={o}
-                    initial={{ opacity: 0, scale: 0.88 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: i * 0.06, duration: 0.28 }}
-                    className="bg-surface border border-border rounded-lg py-2 px-2 text-center"
-                  >
-                    <p className="text-[11px] font-semibold text-ink">{o}</p>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 1.3, duration: 0.45 }}
-        className="absolute -right-3 top-6 bg-white border border-border rounded-xl shadow-lg px-3 py-2"
-      >
-        <p className="text-xs font-semibold text-ink">
-          <span className="text-brand">10 min</span> average
-        </p>
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 1.6, duration: 0.45 }}
-        className="absolute -left-3 bottom-10 bg-white border border-border rounded-xl shadow-lg px-3 py-2"
-      >
-        <p className="text-xs font-semibold text-ink">
-          <span className="text-brand">Free</span> to start
-        </p>
-      </motion.div>
-    </div>
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path d="M3 8l3 3 7-7" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
   );
 }
 
-function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
-  const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    const h = () => setScrolled(window.scrollY > 16);
-    window.addEventListener("scroll", h, { passive: true });
-    return () => window.removeEventListener("scroll", h);
-  }, []);
-
+function ArrowIcon() {
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${
-        scrolled || open ? "bg-white/95 backdrop-blur-xl border-b border-border shadow-sm" : "bg-transparent"
-      }`}
-    >
-      <div className="max-w-6xl mx-auto px-5 md:px-8 h-16 flex items-center justify-between">
-        <Link href="/"><LogoWordmark size={30} /></Link>
-
-        <div className="hidden md:flex items-center gap-8">
-          <a href="#how-it-works" className="text-sm font-medium text-muted hover:text-ink transition-colors">
-            How it works
-          </a>
-          <Link href="/pricing" className="text-sm font-medium text-muted hover:text-ink transition-colors">
-            Pricing
-          </Link>
-          <Link href="/vision" className="text-sm font-medium text-muted hover:text-ink transition-colors">
-            Vision
-          </Link>
-        </div>
-
-        <div className="hidden md:flex items-center gap-2">
-          <CTAButton className="text-sm font-medium text-muted hover:text-ink px-4 py-2 rounded-lg hover:bg-surface transition-all">
-            Sign in
-          </CTAButton>
-          <CTAButton className="text-sm font-semibold text-white bg-brand hover:bg-brand-dark px-5 py-2 rounded-lg transition-all shadow-sm">
-            Try free
-          </CTAButton>
-        </div>
-
-        <button className="md:hidden text-muted p-1.5" onClick={() => setOpen(!open)} aria-label="Menu">
-          {open ? <IconClose /> : <IconMenu />}
-        </button>
-      </div>
-
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-white border-t border-border overflow-hidden"
-          >
-            <div className="px-6 py-5 flex flex-col gap-4">
-              <a href="#how-it-works" onClick={() => setOpen(false)} className="text-sm font-medium text-muted">How it works</a>
-              <a href="#pricing" onClick={() => setOpen(false)} className="text-sm font-medium text-muted">Pricing</a>
-              <div className="h-px bg-border" />
-              <CTAButton className="text-sm font-medium text-muted text-left">Sign in</CTAButton>
-              <CTAButton className="text-sm font-semibold text-white bg-brand py-3 rounded-xl text-center w-full">
-                Try free — no card needed
-              </CTAButton>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </nav>
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <path d="M2 7h10M8.5 3.5 12 7l-3.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
   );
 }
 
 function Hero() {
   return (
-    <section className="relative min-h-screen flex items-center pt-16 overflow-hidden">
-      <div className="absolute inset-0 hero-grid opacity-50" />
-      <div className="absolute inset-0 bg-linear-to-br from-white via-white/95 to-brand-light/50" />
-
-      <div className="relative max-w-6xl mx-auto px-5 md:px-8 py-20 md:py-28 w-full">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          <div>
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 bg-brand-light border border-brand-muted text-brand text-xs font-semibold px-3 py-1.5 rounded-full mb-6"
-            >
-              <span className="w-1.5 h-1.5 bg-brand rounded-full" />
-              AI Research Assistant
-            </motion.div>
-
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.65, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-              className="font-display font-extrabold text-[48px] md:text-[58px] leading-[1.08] tracking-[-0.04em] text-ink mb-5"
-            >
-              Upload tonight.
-              <br />
-              Present in the
-              <br />
-              <span className="text-brand">morning.</span>
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.65, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-              className="text-[17px] leading-relaxed text-muted mb-8 max-w-107.5"
-            >
-              Upload any research paper and Arxio generates a complete 15-slide presentation,
-              cheat sheet, Q&A prep, and flashcards — in under 10 minutes.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.65, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              className="flex flex-wrap gap-3 mb-10"
-            >
-              <CTAButton className="inline-flex items-center gap-2 bg-brand hover:bg-brand-dark text-white font-semibold text-sm px-6 py-3 rounded-xl transition-all shadow-lg shadow-brand/20 hover:shadow-brand/35 hover:-translate-y-0.5">
-                Try free — no card needed
-              </CTAButton>
-              <a
-                href="#how-it-works"
-                className="inline-flex items-center gap-2 text-ink font-semibold text-sm px-6 py-3 rounded-xl border border-border hover:border-[#c7d6e8] bg-white hover:bg-surface transition-all"
-              >
-                See how it works
-                <IconArrow />
-              </a>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.55, duration: 0.5 }}
-              className="flex items-center gap-7 pt-8 border-t border-border"
-            >
-              {[
-                { value: "10 min", label: "average processing" },
-                { value: "15", label: "slides generated" },
-                { value: "Free", label: "to get started" },
-              ].map((s) => (
-                <div key={s.label}>
-                  <p className="font-display font-bold text-[22px] text-ink tracking-tight leading-none mb-1">{s.value}</p>
-                  <p className="text-[11px] text-subtle">{s.label}</p>
-                </div>
-              ))}
-            </motion.div>
-          </div>
-
-          <div className="flex justify-center lg:justify-end">
-            <HeroCard />
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function TrustStrip() {
-  const unis = ["IIT Delhi", "IIT Bombay", "BITS Pilani", "Delhi University", "VIT", "IIT Madras", "NIT Trichy", "Manipal", "IIIT Hyderabad", "Amity University"];
-
-  const Chip = ({ name }) => (
-    <div className="flex items-center gap-2.5 bg-white border border-border rounded-full px-4 py-2 shadow-sm shrink-0">
-      <div className="w-1.5 h-1.5 rounded-full bg-brand/40 shrink-0" />
-      <span className="text-[13px] font-semibold text-ink whitespace-nowrap">{name}</span>
-    </div>
-  );
-
-  return (
-    <div className="border-y border-border bg-surface py-6 overflow-hidden">
-      <p className="text-center text-[10px] font-bold text-subtle uppercase tracking-[0.12em] mb-5">
-        Used by students at
-      </p>
-      <div className="relative overflow-hidden mask-[linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
-        <div className="flex gap-3 w-max animate-[marquee_28s_linear_infinite]">
-          {[...unis, ...unis].map((u, i) => <Chip key={i} name={u} />)}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function HowItWorks() {
-  const steps = [
-    {
-      n: "01",
-      title: "Upload your PDF",
-      desc: "Drop any research paper — IEEE articles, journals, thesis documents. Up to 50 pages, 50 MB.",
-      icon: (
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-          <path d="M4 15v2a2 2 0 002 2h10a2 2 0 002-2v-2M15 7l-4-4-4 4M11 3v11" stroke="#2563eb" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      ),
-    },
-    {
-      n: "02",
-      title: "AI analyses everything",
-      desc: "The AI reads the full paper — methodology, results, key findings, limitations. Nothing skipped.",
-      icon: (
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-          <path d="M11 2L12.8 8.2L19 10L12.8 11.8L11 18L9.2 11.8L3 10L9.2 8.2L11 2Z" stroke="#2563eb" strokeWidth="1.75" strokeLinejoin="round" />
-          <path d="M18 14l1 3 1-3 3-1-3-1-1-3-1 3-3 1 3 1z" stroke="#93c5fd" strokeWidth="1.25" strokeLinejoin="round" />
-        </svg>
-      ),
-    },
-    {
-      n: "03",
-      title: "Download and present",
-      desc: "Your workspace is ready in under 10 minutes — slides, cheat sheet, Q&A prep, flashcards, and more.",
-      icon: (
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-          <path d="M4 15v2a2 2 0 002 2h10a2 2 0 002-2v-2M7 11l4 4 4-4M11 7v8" stroke="#2563eb" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      ),
-    },
-  ];
-
-  return (
-    <section id="how-it-works" className="py-24 px-5 md:px-8">
-      <div className="max-w-6xl mx-auto">
-        <FadeIn className="text-center mb-14">
-          <p className="text-[10px] font-bold text-brand uppercase tracking-[0.12em] mb-3">How it works</p>
-          <h2 className="font-display font-extrabold text-[38px] md:text-[44px] tracking-[-0.03em] text-ink leading-tight">
-            Three steps. Ten minutes.
-          </h2>
-          <p className="text-[16px] text-muted mt-4 max-w-sm mx-auto">
-            No setup. No learning curve. Upload your paper and walk away.
+    <section className="relative overflow-hidden border-b border-border bg-white">
+      <div className="absolute inset-0 hero-grid opacity-40" />
+      <div className="absolute -top-20 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-brand/15 blur-3xl" />
+      <div className="relative mx-auto grid w-full max-w-6xl gap-12 px-5 pb-20 pt-28 md:px-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+        <div>
+          <p className="mb-4 inline-flex items-center rounded-full border border-brand-muted bg-brand-light px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-brand">
+            Research, simplified
           </p>
-        </FadeIn>
-
-        <div className="grid md:grid-cols-3 gap-6 relative">
-          <div className="hidden md:block absolute top-9 left-[calc(33.33%-20px)] right-[calc(33.33%-20px)] h-px bg-linear-to-r from-border via-brand/20 to-border" />
-
-          {steps.map((s, i) => (
-            <FadeIn key={s.n} delay={i * 0.1} className="h-full">
-              <div className="relative bg-white border border-border rounded-2xl p-7 hover:border-brand-muted hover:shadow-xl hover:shadow-brand/5 transition-all duration-300 h-full">
-                <div className="flex items-start justify-between mb-5">
-                  <div className="w-11 h-11 bg-brand-light rounded-xl flex items-center justify-center">{s.icon}</div>
-                  <span className="font-display font-extrabold text-[34px] text-border leading-none">{s.n}</span>
-                </div>
-                <h3 className="font-display font-bold text-[17px] text-ink mb-2 tracking-[-0.02em]">{s.title}</h3>
-                <p className="text-[13.5px] text-muted leading-relaxed">{s.desc}</p>
-              </div>
-            </FadeIn>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Outputs() {
-  const items = [
-    {
-      title: "15-Slide Presentation",
-      desc: "A complete deck with title, agenda, methodology, results, and Q&A slide — speaker notes included for every slide.",
-      tag: "Most used",
-      icon: (
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-          <rect x="2" y="4" width="18" height="12" rx="2" stroke="#2563eb" strokeWidth="1.75" />
-          <path d="M8 20h6M11 16v4" stroke="#2563eb" strokeWidth="1.75" strokeLinecap="round" />
-          <path d="M5.5 8.5h11M5.5 11.5h8" stroke="#93c5fd" strokeWidth="1.2" strokeLinecap="round" />
-        </svg>
-      ),
-    },
-    {
-      title: "Cheat Sheet",
-      desc: "One dense page with key terms, core results, methodology in three lines, talking points, and fallback answers.",
-      tag: "",
-      icon: (
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-          <rect x="4" y="2" width="14" height="18" rx="2" stroke="#2563eb" strokeWidth="1.75" />
-          <path d="M7.5 7h7M7.5 11h7M7.5 15h5" stroke="#93c5fd" strokeWidth="1.2" strokeLinecap="round" />
-        </svg>
-      ),
-    },
-    {
-      title: "Q&A Preparation",
-      desc: "10 real questions a professor would ask — 2 easy, 5 medium, 3 hard — with complete, professor-proof answers.",
-      tag: "",
-      icon: (
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-          <circle cx="11" cy="11" r="8" stroke="#2563eb" strokeWidth="1.75" />
-          <path d="M9 9c0-1.1.9-2 2-2s2 .9 2 2c0 1.5-2 2-2 3" stroke="#2563eb" strokeWidth="1.75" strokeLinecap="round" />
-          <circle cx="11" cy="16" r="0.8" fill="#2563eb" />
-        </svg>
-      ),
-    },
-    {
-      title: "Flashcards",
-      desc: "15 flip cards for self-testing — key definitions, exact results with numbers, algorithm names, and methodology steps.",
-      tag: "",
-      icon: (
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-          <rect x="5" y="6" width="14" height="10" rx="2" stroke="#93c5fd" strokeWidth="1.5" />
-          <rect x="3" y="4" width="14" height="10" rx="2" stroke="#2563eb" strokeWidth="1.75" />
-          <path d="M6.5 9h7M6.5 12h5" stroke="#93c5fd" strokeWidth="1.2" strokeLinecap="round" />
-        </svg>
-      ),
-    },
-    {
-      title: "AI Chat",
-      desc: "Ask anything about the paper. The AI knows every section, every result, every number. Available for 10 minutes on free.",
-      tag: "Interactive",
-      icon: (
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-          <path d="M4 4h14a2 2 0 012 2v8a2 2 0 01-2 2H8l-4 3V6a2 2 0 012-2z" stroke="#2563eb" strokeWidth="1.75" strokeLinejoin="round" />
-          <path d="M7.5 9h7M7.5 12h5" stroke="#93c5fd" strokeWidth="1.2" strokeLinecap="round" />
-        </svg>
-      ),
-    },
-    {
-      title: "Research Mode",
-      desc: "Type any topic. Arxio searches the web, synthesises sources, and generates a full research document and 15-slide deck.",
-      tag: "No PDF needed",
-      icon: (
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-          <circle cx="9.5" cy="9.5" r="6" stroke="#2563eb" strokeWidth="1.75" />
-          <path d="M14 14l5 5" stroke="#2563eb" strokeWidth="1.75" strokeLinecap="round" />
-          <path d="M7 9.5h5M9.5 7v5" stroke="#93c5fd" strokeWidth="1.2" strokeLinecap="round" />
-        </svg>
-      ),
-    },
-  ];
-
-  return (
-    <section className="py-24 px-5 md:px-8 bg-surface">
-      <div className="max-w-6xl mx-auto">
-        <FadeIn className="text-center mb-14">
-          <p className="text-[10px] font-bold text-brand uppercase tracking-[0.12em] mb-3">What you get</p>
-          <h2 className="font-display font-extrabold text-[38px] md:text-[44px] tracking-[-0.03em] text-ink leading-tight">
-            Everything for your presentation.
+          <h1 className="font-display text-5xl font-extrabold leading-[1.05] tracking-[-0.04em] text-ink md:text-6xl">
+            Upload tonight.
             <br />
-            Nothing unnecessary.
-          </h2>
-        </FadeIn>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {items.map((f, i) => (
-            <FadeIn key={f.title} delay={i * 0.07}>
-              <div className="bg-white rounded-2xl border border-border p-6 h-full hover:border-brand-muted hover:shadow-xl hover:shadow-brand/5 transition-all duration-300 group">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="w-11 h-11 bg-brand-light rounded-xl flex items-center justify-center">{f.icon}</div>
-                  {f.tag && (
-                    <span className="text-[10px] font-bold text-brand bg-brand-light border border-brand-muted px-2 py-0.5 rounded-full uppercase tracking-wide whitespace-nowrap">
-                      {f.tag}
-                    </span>
-                  )}
-                </div>
-                <h3 className="font-display font-bold text-[15px] text-ink mb-2 tracking-[-0.02em]">{f.title}</h3>
-                <p className="text-[13px] text-muted leading-relaxed">{f.desc}</p>
+            Present tomorrow.
+          </h1>
+          <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted">
+            Arxio turns dense papers into a full presentation workspace in minutes, so students, researchers, and scholars spend less time stressing and more time learning.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link
+              href="/pricing"
+              className="inline-flex items-center gap-2 rounded-xl bg-brand px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand/25 transition hover:-translate-y-0.5 hover:bg-brand-dark"
+            >
+              Start free
+              <ArrowIcon />
+            </Link>
+            <a
+              href="#journey"
+              className="inline-flex items-center gap-2 rounded-xl border border-border bg-white px-6 py-3 text-sm font-semibold text-ink transition hover:border-brand-muted hover:bg-surface"
+            >
+              See user journey
+            </a>
+          </div>
+          <div className="mt-9 grid max-w-lg grid-cols-3 gap-6 border-t border-border pt-6">
+            {PROOF.map((item) => (
+              <div key={item.label}>
+                <p className="font-display text-2xl font-bold tracking-tight text-ink">{item.value}</p>
+                <p className="mt-1 text-xs text-subtle">{item.label}</p>
               </div>
-            </FadeIn>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-const CTA_MAP = {
-  free: "Get started free",
-  student: "Start free trial",
-  pro: "Start free trial",
-  scholar: "Start free trial",
-};
-
-
-function Pricing() {
-  const [plans, setPlans] = useState(PLANS_DATA);
-
-  useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/subscription/plans`)
-      .then((r) => r.json())
-      .then((res) => { if (res.success) setPlans(res.data.plans); })
-      .catch(() => {});
-  }, []);
-
-  return (
-    <section id="pricing" className="py-24 px-5 md:px-8">
-      <div className="max-w-6xl mx-auto">
-        <FadeIn className="text-center mb-14">
-          <p className="text-[10px] font-bold text-brand uppercase tracking-[0.12em] mb-3">Pricing</p>
-          <h2 className="font-display font-extrabold text-[38px] md:text-[44px] tracking-[-0.03em] text-ink leading-tight">
-            Start free. Upgrade when ready.
-          </h2>
-          <p className="text-[16px] text-muted mt-4">No card required. Cancel anytime.</p>
-        </FadeIn>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5 items-start">
-            {plans.map((p, i) => (
-              <FadeIn key={p.tier} delay={i * 0.08} className="h-full">
-                <div
-                  className={`relative rounded-2xl p-6 flex flex-col h-full ${
-                    p.highlight
-                      ? "bg-brand border-2 border-brand shadow-2xl shadow-brand/25"
-                      : "bg-white border border-border"
-                  }`}
-                >
-                  {p.highlight && (
-                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-white text-brand text-[10px] font-bold px-3 py-1 rounded-full shadow-md border border-brand-muted uppercase tracking-widest whitespace-nowrap">
-                      Most Popular
-                    </div>
-                  )}
-
-                  <div className="mb-6">
-                    <p className={`font-display font-bold text-[12px] tracking-widest uppercase mb-1.5 ${p.highlight ? "text-blue-200" : "text-muted"}`}>
-                      {p.name}
-                    </p>
-                    <div className="flex items-baseline gap-0.5 mb-2">
-                      <span className={`font-display font-extrabold text-[38px] tracking-[-0.04em] leading-none ${p.highlight ? "text-white" : "text-ink"}`}>
-                        {p.price === 0 ? "Free" : `$${p.price}`}
-                      </span>
-                      {p.price > 0 && (
-                        <span className={`text-sm ml-0.5 ${p.highlight ? "text-blue-200" : "text-subtle"}`}>/mo</span>
-                      )}
-                    </div>
-                    <p className={`text-[12px] leading-relaxed ${p.highlight ? "text-blue-200" : "text-subtle"}`}>{p.tagline}</p>
-                  </div>
-
-                  <ul className="space-y-2.5 mb-6 flex-1">
-                    {p.features.map((f) => (
-                      <li key={f} className="flex items-start gap-2">
-                        <span className={`mt-0.5 shrink-0 ${p.highlight ? "text-blue-200" : "text-brand"}`}>
-                          <IconCheck size={14} />
-                        </span>
-                        <span className={`text-[13px] leading-snug ${p.highlight ? "text-blue-50" : "text-muted"}`}>{f}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <CTAButton
-                    className={`w-full py-2.5 rounded-xl text-[13px] font-semibold text-center transition-all ${
-                      p.highlight
-                        ? "bg-white text-brand hover:bg-brand-light"
-                        : "bg-surface text-ink hover:bg-brand-light hover:text-brand border border-border"
-                    }`}
-                  >
-                    {CTA_MAP[p.tier] ?? "Get started"}
-                  </CTAButton>
-                </div>
-              </FadeIn>
             ))}
           </div>
+        </div>
+
+        <div className="rounded-3xl border border-border bg-white p-6 shadow-xl shadow-brand/10">
+          <div className="mb-5 flex items-center gap-2">
+            <span className="h-2.5 w-2.5 rounded-full bg-[#fc635d]" />
+            <span className="h-2.5 w-2.5 rounded-full bg-[#fdbc40]" />
+            <span className="h-2.5 w-2.5 rounded-full bg-[#34c749]" />
+            <span className="ml-auto text-xs text-subtle">arxio.in</span>
+          </div>
+          <div className="rounded-2xl border border-border bg-surface p-4">
+            <p className="text-xs font-semibold text-subtle">Uploaded</p>
+            <p className="mt-1 text-sm font-semibold text-ink">lane_detection_vilds.pdf</p>
+            <p className="mt-1 text-xs text-muted">48 pages • 2.1 MB</p>
+          </div>
+          <div className="mt-4 rounded-2xl border border-brand-muted bg-brand-light p-4">
+            <p className="text-xs font-semibold text-brand">Workspace ready</p>
+            <ul className="mt-3 grid grid-cols-2 gap-2 text-xs font-medium text-ink">
+              {OUTPUTS.slice(0, 4).map((item) => (
+                <li key={item} className="rounded-lg border border-brand-muted bg-white px-2.5 py-2">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <p className="mt-4 text-xs text-muted">From upload to complete workspace, typically under 10 minutes.</p>
+        </div>
       </div>
     </section>
   );
 }
 
-function FinalCTA() {
+function UserJourney() {
   return (
-    <section className="py-20 px-5 md:px-8">
-      <FadeIn>
-        <div className="max-w-3xl mx-auto bg-ink rounded-3xl p-14 md:p-20 text-center relative overflow-hidden">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-80 h-80 bg-brand/25 blur-3xl rounded-full pointer-events-none" />
-          <div className="absolute bottom-0 right-0 w-48 h-48 bg-brand/10 blur-3xl rounded-full pointer-events-none" />
+    <section id="journey" className="mx-auto w-full max-w-6xl px-5 py-20 md:px-8">
+      <div className="mb-12 text-center">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-brand">Product journey</p>
+        <h2 className="mt-3 font-display text-4xl font-extrabold tracking-[-0.03em] text-ink md:text-5xl">
+          Built for real deadlines.
+        </h2>
+        <p className="mx-auto mt-4 max-w-2xl text-base text-muted">
+          The flow is intentionally simple: one clear action per screen, visible progress, and outputs that are immediately usable.
+        </p>
+      </div>
+      <div className="grid gap-5 md:grid-cols-3">
+        {JOURNEY_STEPS.map((step, idx) => (
+          <article key={step.title} className="rounded-2xl border border-border bg-white p-6 shadow-sm">
+            <p className="font-display text-4xl font-bold text-brand-muted">{String(idx + 1).padStart(2, "0")}</p>
+            <h3 className="mt-4 font-display text-xl font-bold text-ink">{step.title}</h3>
+            <p className="mt-2 text-sm leading-relaxed text-muted">{step.description}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
 
-          <div className="relative">
-            <p className="text-[10px] font-bold text-brand uppercase tracking-[0.14em] mb-4">Start tonight</p>
-            <h2 className="font-display font-extrabold text-[36px] md:text-[44px] leading-[1.1] tracking-[-0.04em] text-white mb-5">
-              Your next presentation
+function NightBeforeComparison() {
+  return (
+    <section className="border-y border-border bg-white py-20">
+      <div className="mx-auto w-full max-w-6xl px-5 md:px-8">
+        <div className="mb-10 text-center">
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-brand">Reality check</p>
+          <h2 className="mt-3 font-display text-4xl font-extrabold tracking-[-0.03em] text-ink md:text-5xl">
+            The night before.
+            <br />
+            With and without Arxio.
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-base text-muted">
+            This is the exact user journey we optimize for: less panic, more preparedness, better outcomes.
+          </p>
+        </div>
+        <div className="overflow-hidden rounded-2xl border border-border bg-surface">
+          <div className="grid grid-cols-[120px_1fr_1fr] bg-white text-xs font-semibold uppercase tracking-wider text-subtle">
+            <div className="border-r border-border px-4 py-3">Time</div>
+            <div className="border-r border-border px-4 py-3">Without Arxio</div>
+            <div className="px-4 py-3 text-brand">With Arxio</div>
+          </div>
+          {NIGHT_BEFORE.map((row, idx) => (
+            <div key={row.time} className={`grid grid-cols-[120px_1fr_1fr] ${idx % 2 === 0 ? "bg-surface" : "bg-white"}`}>
+              <div className="border-r border-t border-border px-4 py-4 text-xs font-semibold text-ink">{row.time}</div>
+              <div className="border-r border-t border-border px-4 py-4 text-sm text-muted">{row.without}</div>
+              <div className="border-t border-border px-4 py-4 text-sm font-medium text-ink">{row.withArxio}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function OutputsSection() {
+  return (
+    <section className="border-y border-border bg-surface py-20">
+      <div className="mx-auto w-full max-w-6xl px-5 md:px-8">
+        <div className="grid gap-10 lg:grid-cols-[1fr_1fr] lg:items-start">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-widest text-brand">Output quality</p>
+            <h2 className="mt-3 font-display text-4xl font-extrabold tracking-[-0.03em] text-ink">
+              Not a summary.
               <br />
-              is already written.
+              A full preparation kit.
             </h2>
-            <p className="text-subtle text-[15px] mb-8 max-w-sm mx-auto">
-              Upload your paper now. Be done before midnight.
+            <p className="mt-4 max-w-xl text-base leading-relaxed text-muted">
+              Arxio creates practical outputs for presentation day, viva prep, and revision. Everything is saved in your library and ready when you return.
             </p>
-            <CTAButton className="inline-flex items-center gap-2 bg-brand hover:bg-brand-dark text-white font-semibold text-sm px-8 py-3.5 rounded-xl transition-all shadow-lg shadow-brand/30 hover:-translate-y-0.5">
-              Try free — no card needed
-              <IconArrow />
-            </CTAButton>
+          </div>
+          <ul className="grid gap-3 sm:grid-cols-2">
+            {OUTPUTS.map((item) => (
+              <li key={item} className="flex items-center gap-2 rounded-xl border border-border bg-white px-4 py-3 text-sm font-semibold text-ink">
+                <span className="text-brand">
+                  <CheckIcon />
+                </span>
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function FirstImpressionSection() {
+  return (
+    <section className="mx-auto w-full max-w-6xl px-5 py-20 md:px-8">
+      <div className="mb-10 text-center">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-brand">What users notice first</p>
+        <h2 className="mt-3 font-display text-4xl font-extrabold tracking-[-0.03em] text-ink md:text-5xl">
+          Eye-catching, but purposeful.
+        </h2>
+        <p className="mx-auto mt-4 max-w-2xl text-base text-muted">
+          The interface is designed to immediately answer three questions: What do I do now? Is it working? Am I ready?
+        </p>
+      </div>
+
+      <div className="grid gap-5 lg:grid-cols-3">
+        {FIRST_LOOK.map((item) => (
+          <article key={item.title} className="relative overflow-hidden rounded-2xl border border-border bg-white p-6 shadow-sm">
+            <div className={`pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-linear-to-br ${item.tone} blur-2xl`} />
+            <div className="relative">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-subtle">First 30 seconds</p>
+              <h3 className="mt-2 font-display text-2xl font-bold tracking-tight text-ink">{item.title}</h3>
+              <p className="mt-1 text-sm text-muted">{item.subtitle}</p>
+              <ul className="mt-4 space-y-2">
+                {item.bullets.map((b) => (
+                  <li key={b} className="flex items-center gap-2 text-sm font-medium text-ink">
+                    <span className="text-brand">
+                      <CheckIcon />
+                    </span>
+                    {b}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function VisualBreak() {
+  return (
+    <section className="border-y border-border bg-ink py-14">
+      <div className="mx-auto w-full max-w-6xl px-5 md:px-8">
+        <div className="grid items-center gap-8 md:grid-cols-[1fr_auto_1fr]">
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+            <p className="text-xs font-semibold uppercase tracking-wider text-subtle">Before</p>
+            <p className="mt-2 font-display text-2xl font-bold text-white">Scattered notes, uncertain slides, last-minute stress</p>
+          </div>
+          <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-brand text-white shadow-lg shadow-brand/40">
+            <ArrowIcon />
+          </div>
+          <div className="rounded-2xl border border-brand/40 bg-brand/15 p-5">
+            <p className="text-xs font-semibold uppercase tracking-wider text-blue-100">After</p>
+            <p className="mt-2 font-display text-2xl font-bold text-white">Structured workspace, polished deck, confident delivery</p>
           </div>
         </div>
-      </FadeIn>
+      </div>
+    </section>
+  );
+}
+
+function WhoItsFor() {
+  return (
+    <section className="mx-auto w-full max-w-6xl px-5 py-20 md:px-8">
+      <div className="mb-10 text-center">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-brand">Who it serves</p>
+        <h2 className="mt-3 font-display text-4xl font-extrabold tracking-[-0.03em] text-ink md:text-5xl">
+          Different users.
+          <br />
+          One calm workflow.
+        </h2>
+      </div>
+      <div className="grid gap-5 md:grid-cols-3">
+        {USERS.map((user) => (
+          <article key={user.role} className="rounded-2xl border border-border bg-white p-6 shadow-sm">
+            <h3 className="font-display text-xl font-bold text-ink">{user.role}</h3>
+            <p className="mt-3 text-xs font-semibold uppercase tracking-wider text-subtle">Today&apos;s pain</p>
+            <p className="mt-1 text-sm text-muted">{user.pain}</p>
+            <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-brand">What Arxio gives</p>
+            <p className="mt-1 text-sm text-ink">{user.gain}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function PricingPreview() {
+  const plans = PLANS_DATA.map((p) => ({
+    name: p.name,
+    price: p.price,
+    tagline: p.tagline,
+    highlight: p.highlight,
+  }));
+
+  return (
+    <section id="pricing" className="border-y border-border bg-surface py-20">
+      <div className="mx-auto w-full max-w-6xl px-5 md:px-8">
+        <div className="mb-10 text-center">
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-brand">Pricing</p>
+          <h2 className="mt-3 font-display text-4xl font-extrabold tracking-[-0.03em] text-ink md:text-5xl">
+            Start free. Scale as you grow.
+          </h2>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {plans.map((plan) => (
+            <article
+              key={plan.name}
+              className={`rounded-2xl border p-5 ${
+                plan.highlight
+                  ? "border-brand bg-brand text-white shadow-xl shadow-brand/30"
+                  : "border-border bg-white text-ink"
+              }`}
+            >
+              <p className={`text-[11px] font-semibold uppercase tracking-wider ${plan.highlight ? "text-blue-100" : "text-subtle"}`}>
+                {plan.name}
+              </p>
+              <p className="mt-2 font-display text-4xl font-extrabold tracking-[-0.03em]">
+                {plan.price === 0 ? "Free" : `$${plan.price}`}
+                {plan.price > 0 ? <span className="ml-1 text-sm font-semibold">/mo</span> : null}
+              </p>
+              <p className={`mt-3 text-xs leading-relaxed ${plan.highlight ? "text-blue-100" : "text-muted"}`}>{plan.tagline}</p>
+            </article>
+          ))}
+        </div>
+        <div className="mt-8 text-center">
+          <Link href="/pricing" className="inline-flex items-center gap-2 rounded-xl border border-border bg-white px-5 py-3 text-sm font-semibold text-ink transition hover:border-brand-muted hover:bg-brand-light hover:text-brand">
+            Compare all features
+            <ArrowIcon />
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function FinalCta() {
+  return (
+    <section className="mx-auto w-full max-w-6xl px-5 py-20 md:px-8">
+      <div className="relative overflow-hidden rounded-3xl bg-ink px-8 py-14 text-center md:px-14">
+        <div className="pointer-events-none absolute -left-12 top-0 h-56 w-56 rounded-full bg-brand/30 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-10 right-0 h-56 w-56 rounded-full bg-brand/20 blur-3xl" />
+        <div className="relative">
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-brand">Ready to begin</p>
+          <h2 className="mt-3 font-display text-4xl font-extrabold tracking-[-0.03em] text-white md:text-5xl">
+            Break the panic loop.
+            <br />
+            Prepare smarter with Arxio.
+          </h2>
+          <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-subtle">
+            Your paper should not take your entire night. Let the workflow run for you, so your energy goes into understanding and presenting.
+          </p>
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <Link href="/pricing" className="rounded-xl bg-brand px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-dark">
+              Start free now
+            </Link>
+            <Link href="/vision" className="rounded-xl border border-white/20 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
+              Read the vision
+            </Link>
+          </div>
+        </div>
+      </div>
     </section>
   );
 }
 
 function Footer() {
   return (
-    <footer className="border-t border-border py-10 px-5 md:px-8">
-      <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-        <div>
-          <p className="font-display font-bold text-[18px] text-ink tracking-[-0.03em]">Arxio</p>
-          <p className="text-[11px] text-subtle mt-0.5">Vision. Clarity. Insight.</p>
-        </div>
-
-        <div className="flex flex-wrap items-center justify-center gap-x-7 gap-y-2 text-sm text-muted">
-          <a href="#how-it-works" className="hover:text-ink transition-colors">How it works</a>
-          <Link href="/pricing" className="hover:text-ink transition-colors">Pricing</Link>
-          <Link href="/vision" className="hover:text-ink transition-colors">Vision</Link>
-          <Link href="/terms" className="hover:text-ink transition-colors">Terms</Link>
-          <Link href="/privacy" className="hover:text-ink transition-colors">Privacy</Link>
-          <Link href="/refund" className="hover:text-ink transition-colors">Refunds</Link>
-          <CTAButton className="hover:text-ink transition-colors">Sign in</CTAButton>
-        </div>
-
-        <p className="text-[11px] text-subtle">© 2026 Arxio. All rights reserved.</p>
+    <footer className="border-t border-border bg-white py-10">
+      <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-5 px-5 text-sm text-muted md:flex-row md:px-8">
+        <LogoWordmark size={26} />
+        <nav className="flex flex-wrap items-center justify-center gap-5">
+          <Link href="/pricing" className="transition hover:text-ink">Pricing</Link>
+          <Link href="/vision" className="transition hover:text-ink">Vision</Link>
+          <Link href="/terms" className="transition hover:text-ink">Terms</Link>
+          <Link href="/privacy" className="transition hover:text-ink">Privacy</Link>
+          <Link href="/refund" className="transition hover:text-ink">Refund</Link>
+        </nav>
+        <p className="text-xs text-subtle">© 2026 Arxio</p>
       </div>
     </footer>
   );
 }
 
 export default function Page() {
-  const [modalOpen, setModalOpen] = useState(false);
   return (
-    <ModalCtx.Provider value={() => setModalOpen(true)}>
-      <main>
-        <Navbar />
-        <Hero />
-        <TrustStrip />
-        <HowItWorks />
-        <Outputs />
-        <Pricing />
-        <FinalCTA />
-        <Footer />
-      </main>
-      <ComingSoonModal open={modalOpen} onClose={() => setModalOpen(false)} />
-    </ModalCtx.Provider>
+    <main>
+      <header className="fixed inset-x-0 top-0 z-40 border-b border-border/70 bg-white/90 backdrop-blur">
+        <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-5 md:px-8">
+          <LogoWordmark size={28} />
+          <div className="flex items-center gap-2">
+            <Link href="/pricing" className="rounded-lg px-4 py-2 text-sm font-medium text-muted transition hover:bg-surface hover:text-ink">
+              Pricing
+            </Link>
+            <Link href="/vision" className="rounded-lg px-4 py-2 text-sm font-medium text-muted transition hover:bg-surface hover:text-ink">
+              Vision
+            </Link>
+            <Link href="/pricing" className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-dark">
+              Try free
+            </Link>
+          </div>
+        </div>
+      </header>
+      <Hero />
+      <NightBeforeComparison />
+      <UserJourney />
+      <FirstImpressionSection />
+      <VisualBreak />
+      <OutputsSection />
+      <WhoItsFor />
+      <PricingPreview />
+      <FinalCta />
+      <Footer />
+    </main>
   );
 }
