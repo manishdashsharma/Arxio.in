@@ -6,13 +6,16 @@
 
   --color-brand: #2563eb;
   --color-brand-dark: #1d4ed8;
-  --color-brand-light: #eff6ff;
-  --color-brand-muted: #dbeafe;
-  --color-surface: #f8fafc;
-  --color-border: #e2e8f0;
+  --color-brand-light: #dbeafe;
+  --color-brand-muted: #1e40af;
+  --color-surface: #ffffff;
+  --color-surface-low: #f8fafc;
+  --color-surface-container: #f1f5f9;
+  --color-surface-container-high: #e2e8f0;
+  --color-border: #dbe3ef;
   --color-ink: #0f172a;
-  --color-muted: #64748b;
-  --color-subtle: #94a3b8;
+  --color-muted: #475569;
+  --color-subtle: #64748b;
 }
 
 *,
@@ -38,13 +41,361 @@ body {
 }
 
 .hero-grid {
-  background-image: radial-gradient(circle, #cbd5e1 1px, transparent 1px);
+  background-image: radial-gradient(circle, #dbe3ef 1px, transparent 1px);
   background-size: 28px 28px;
 }
 
 @keyframes marquee {
   from { transform: translateX(0); }
   to   { transform: translateX(-50%); }
+}
+
+@keyframes heroFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes auroraPulse {
+  0%, 100% { opacity: 0.18; transform: scale(1); }
+  50% { opacity: 0.34; transform: scale(1.05); }
+}
+
+.hero-card-float {
+  animation: heroFloat 8s ease-in-out infinite;
+}
+
+.hero-aurora {
+  animation: auroraPulse 10s ease-in-out infinite;
+}
+
+.marquee-wrap {
+  overflow: hidden;
+  position: relative;
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 28s linear infinite;
+}
+
+@keyframes wowRise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.wow-rise {
+  opacity: 0;
+  animation: wowRise 700ms ease-out forwards;
+}
+
+.wow-rise-delay-1 {
+  opacity: 0;
+  animation: wowRise 700ms ease-out 120ms forwards;
+}
+
+.wow-rise-delay-2 {
+  opacity: 0;
+  animation: wowRise 700ms ease-out 220ms forwards;
+}
+
+.wow-rise-delay-3 {
+  opacity: 0;
+  animation: wowRise 700ms ease-out 300ms forwards;
+}
+
+@keyframes journeyStepIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes journeyPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 rgba(37, 99, 235, 0);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.12);
+    transform: scale(1.04);
+  }
+}
+
+@keyframes journeyActive {
+  0%, 28% {
+    border-color: rgba(37, 99, 235, 0.42);
+    background: rgba(37, 99, 235, 0.14);
+    opacity: 1;
+  }
+  36%, 100% {
+    border-color: rgba(148, 163, 184, 0.55);
+    background: rgba(241, 245, 249, 0.92);
+    opacity: 0.45;
+  }
+}
+
+@keyframes journeyDotStep {
+  0%, 28% {
+    box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.2);
+    transform: scale(1.06);
+    background: rgba(147, 197, 253, 1);
+  }
+  36%, 100% {
+    box-shadow: 0 0 0 rgba(37, 99, 235, 0);
+    transform: scale(1);
+    background: rgba(37, 99, 235, 0.65);
+  }
+}
+
+@keyframes journeyConnectorStep {
+  0%, 8% {
+    transform: scaleY(0.05);
+    opacity: 0;
+  }
+  14%, 30% {
+    transform: scaleY(1);
+    opacity: 0.95;
+  }
+  38%, 100% {
+    transform: scaleY(0.2);
+    opacity: 0.18;
+  }
+}
+
+@keyframes workflowFill {
+  0% { width: 12%; }
+  22% { width: 32%; }
+  50% { width: 58%; }
+  78% { width: 82%; }
+  100% { width: 100%; }
+}
+
+@keyframes workflowActive {
+  0%, 100% {
+    border-color: rgba(203, 213, 225, 0.9);
+    background: rgba(241, 245, 249, 0.95);
+    color: #475569;
+  }
+  12%, 24% {
+    border-color: rgba(37, 99, 235, 0.45);
+    background: rgba(37, 99, 235, 0.14);
+    color: #1e40af;
+  }
+}
+
+@keyframes workflowChip {
+  0%, 100% {
+    background: rgba(226, 232, 240, 0.95);
+    color: #475569;
+  }
+  12%, 24% {
+    background: rgba(37, 99, 235, 0.2);
+    color: rgba(191, 219, 254, 1);
+  }
+}
+
+@keyframes ctaGlow {
+  0%, 100% {
+    box-shadow: 0 10px 22px rgba(37, 99, 235, 0.25);
+  }
+  50% {
+    box-shadow: 0 14px 30px rgba(37, 99, 235, 0.4);
+  }
+}
+
+@keyframes ctaShimmer {
+  from { transform: translateX(-125%); }
+  to { transform: translateX(135%); }
+}
+
+.journey-step {
+  opacity: 0;
+  animation: journeyStepIn 420ms ease-out forwards;
+}
+
+.journey-step .journey-dot {
+  animation: journeyDotStep 3.3s ease-in-out infinite;
+}
+
+.journey-list {
+  position: relative;
+}
+
+.journey-list::before {
+  content: "";
+  position: absolute;
+  left: 11px;
+  top: 16px;
+  bottom: 14px;
+  width: 1px;
+  background: rgba(203, 213, 225, 0.95);
+}
+
+.journey-list::after {
+  content: none;
+}
+
+.journey-step-item {
+  position: relative;
+  border: 1px solid rgba(203, 213, 225, 0.9);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.journey-step-item::before {
+  content: "";
+  position: absolute;
+  left: 11px;
+  top: calc(100% - 2px);
+  width: 2px;
+  height: 14px;
+  transform-origin: top;
+  transform: scaleY(0.05);
+  border-radius: 999px;
+  background: linear-gradient(to bottom, rgba(37, 99, 235, 0.95), rgba(37, 99, 235, 0.2));
+  animation: journeyConnectorStep 3.3s linear infinite;
+}
+
+.journey-step-item:last-child::before {
+  display: none;
+}
+
+.journey-step-item:nth-child(1) {
+  animation: journeyStepIn 420ms ease-out forwards, journeyActive 3.3s ease-in-out infinite;
+}
+
+.journey-step-item:nth-child(2) {
+  animation: journeyStepIn 420ms ease-out 160ms forwards, journeyActive 3.3s ease-in-out 1.1s infinite;
+}
+
+.journey-step-item:nth-child(3) {
+  animation: journeyStepIn 420ms ease-out 320ms forwards, journeyActive 3.3s ease-in-out 2.2s infinite;
+}
+
+.journey-step-item:nth-child(2)::before {
+  animation-delay: 1.1s;
+}
+
+.journey-step-item:nth-child(3)::before {
+  animation-delay: 2.2s;
+}
+
+.journey-step:nth-child(2) .journey-dot {
+  animation-delay: 1.1s;
+}
+
+.journey-step:nth-child(3) .journey-dot {
+  animation-delay: 2.2s;
+}
+
+.workflow-progress-fill {
+  width: 12%;
+  animation: workflowFill 5.6s ease-in-out infinite;
+}
+
+.workflow-stage .workflow-chip {
+  border: 1px solid rgba(71, 85, 105, 0.4);
+}
+
+.workflow-stage-1 {
+  animation: workflowActive 5.6s ease-in-out infinite;
+}
+
+.workflow-stage-1 .workflow-chip {
+  animation: workflowChip 5.6s ease-in-out infinite;
+}
+
+.workflow-stage-2 {
+  animation: workflowActive 5.6s ease-in-out 1.4s infinite;
+}
+
+.workflow-stage-2 .workflow-chip {
+  animation: workflowChip 5.6s ease-in-out 1.4s infinite;
+}
+
+.workflow-stage-3 {
+  animation: workflowActive 5.6s ease-in-out 2.8s infinite;
+}
+
+.workflow-stage-3 .workflow-chip {
+  animation: workflowChip 5.6s ease-in-out 2.8s infinite;
+}
+
+.workflow-stage-4 {
+  animation: workflowActive 5.6s ease-in-out 4.2s infinite;
+}
+
+.workflow-stage-4 .workflow-chip {
+  animation: workflowChip 5.6s ease-in-out 4.2s infinite;
+}
+
+.cta-magnetic {
+  position: relative;
+  overflow: hidden;
+  transition: transform 200ms ease, box-shadow 220ms ease, background-color 220ms ease, filter 220ms ease;
+}
+
+.cta-magnetic:hover {
+  transform: translateY(-2px) scale(1.015);
+  filter: saturate(1.08);
+}
+
+.cta-magnetic:active {
+  transform: translateY(0) scale(0.985);
+}
+
+.cta-primary {
+  animation: ctaGlow 2.8s ease-in-out infinite;
+}
+
+.cta-primary::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: -40% -65%;
+  background: linear-gradient(110deg, rgba(255, 255, 255, 0) 35%, rgba(255, 255, 255, 0.28) 49%, rgba(255, 255, 255, 0) 63%);
+  transform: translateX(-125%);
+}
+
+.cta-primary:hover::after {
+  animation: ctaShimmer 800ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-card-float,
+  .hero-aurora,
+  .marquee-track,
+  .wow-rise,
+  .wow-rise-delay-1,
+  .wow-rise-delay-2,
+  .wow-rise-delay-3,
+  .journey-step,
+  .journey-step .journey-dot,
+  .journey-list::after,
+  .journey-step-item,
+  .workflow-progress-fill,
+  .workflow-stage,
+  .workflow-stage .workflow-chip,
+  .cta-primary {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+
+  .cta-magnetic:hover,
+  .cta-magnetic:active {
+    transform: none !important;
+    filter: none !important;
+  }
 }
 
 .prose-arxio h2 {

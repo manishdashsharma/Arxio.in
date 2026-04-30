@@ -46,7 +46,8 @@ export function LogoMark({ size = 32 }) {
   );
 }
 
-export function LogoWordmark({ size = 32, className = "" }) {
+export function LogoWordmark({ size = 32, className = "", tone = "dark" }) {
+  const wordColor = tone === "light" ? "#dae2fd" : "#0f172a";
   return (
     <span className={`inline-flex items-center gap-2.5 ${className}`}>
       <LogoMark size={size} />
@@ -56,7 +57,7 @@ export function LogoWordmark({ size = 32, className = "" }) {
           fontWeight: 800,
           fontSize: size * 0.65 + "px",
           letterSpacing: "-0.03em",
-          color: "#0f172a",
+          color: wordColor,
           lineHeight: 1,
         }}
       >

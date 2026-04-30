@@ -61,35 +61,38 @@ export function SignInPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-100">
+    <main className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-blue-50/30 text-slate-900">
       <div className="grid min-h-screen lg:grid-cols-2">
         <AuthSidePanel mode="signin" />
         <section className="relative flex items-center justify-center px-5 py-12 sm:px-8">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,rgba(37,99,235,0.24),transparent_38%)]" />
-          <div className="relative w-full max-w-md rounded-2xl border border-slate-800 bg-slate-900/80 p-8 shadow-2xl shadow-black/40 backdrop-blur">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,rgba(37,99,235,0.16),transparent_38%)]" />
+          <div className="relative w-full max-w-md rounded-3xl border border-slate-200 bg-white p-8 shadow-[0_20px_48px_rgba(15,23,42,0.12)]">
             <div className="mb-8 space-y-2">
-              <p className="text-sm font-semibold uppercase tracking-wider text-blue-300">Welcome back</p>
-              <h1 className="text-3xl font-bold tracking-tight text-white">Sign in to Arxio</h1>
-              <p className="text-sm text-slate-400">Access your dashboard, library, and generated workspaces.</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-700">Welcome back</p>
+              <h1 className="text-3xl font-bold tracking-tight text-slate-900">Sign in to Arxio</h1>
+              <p className="text-sm text-slate-600">Access your dashboard, library, and generated workspaces.</p>
+              <div className="inline-flex rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-[11px] font-semibold text-blue-700">
+                Trusted by student presenters
+              </div>
             </div>
 
             <form className="space-y-5" onSubmit={onSubmit}>
               {error ? (
                 <div
-                  className="rounded-xl border border-rose-400/30 bg-gradient-to-r from-rose-500/15 via-rose-400/10 to-amber-400/10 px-4 py-3 text-rose-100 shadow-lg shadow-rose-950/30"
+                  className="rounded-xl border border-rose-300 bg-rose-50 px-4 py-3 text-rose-700"
                   role="alert"
                   aria-live="polite"
                 >
                   <div className="flex items-start gap-3">
                     <span
                       aria-hidden="true"
-                      className="mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-full border border-rose-300/30 bg-rose-500/20 text-sm"
+                      className="mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-full border border-rose-300 bg-rose-100 text-sm"
                     >
                       !
                     </span>
                     <div className="space-y-1">
                       <p className="text-sm font-semibold">{formatAuthError(error).title}</p>
-                      <p className="text-xs text-rose-100/90">{formatAuthError(error).detail}</p>
+                      <p className="text-xs text-rose-700/90">{formatAuthError(error).detail}</p>
                     </div>
                   </div>
                 </div>
@@ -115,24 +118,24 @@ export function SignInPage() {
                 onChange={(e) => setPassword(e.target.value)}
               />
               <div className="flex items-center justify-between text-sm">
-                <label className="inline-flex items-center gap-2 text-slate-400">
-                  <input type="checkbox" className="h-4 w-4 rounded border-slate-600 bg-slate-900" />
+                <label className="inline-flex items-center gap-2 text-slate-500">
+                  <input type="checkbox" className="h-4 w-4 rounded border-slate-300 bg-white" />
                   Remember me
                 </label>
-                <button type="button" className="font-semibold text-blue-300 hover:text-blue-200">
+                <button type="button" className="font-semibold text-blue-700 hover:text-blue-600">
                   Forgot password?
                 </button>
               </div>
               <Button type="submit" className="w-full" loading={submitting}>
                 Sign in
               </Button>
-              <Button variant="outline" className="w-full" type="button">
+              <Button variant="outline" className="w-full border-slate-300" type="button">
                 Continue with Google
               </Button>
             </form>
-            <p className="mt-7 text-center text-sm text-slate-400">
+            <p className="mt-7 text-center text-sm text-slate-600">
               New to Arxio?{" "}
-              <Link to="/signup" className="font-semibold text-blue-300 hover:text-blue-200">
+              <Link to="/signup" className="font-semibold text-blue-700 hover:text-blue-600">
                 Create account
               </Link>
             </p>

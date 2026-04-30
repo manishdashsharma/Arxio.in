@@ -4,3 +4,4 @@ export { Loader } from "./Loader";
 export { Card } from "./Card";
 export { Badge } from "./Badge";
 export { Table } from "./Table";
+export { StatusTag } from "./StatusTag";
