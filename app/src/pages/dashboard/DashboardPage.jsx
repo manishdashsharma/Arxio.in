@@ -400,7 +400,7 @@ export function DashboardPage() {
             ) : workspaceCards.length === 0 ? (
               <p className="mt-3 text-sm text-arxio-on-surface-variant/80">No workspace yet. Upload a PDF to create your first real workspace card.</p>
             ) : (
-              <div className="grid gap-4 md:grid-cols-3">
+              <div className="grid gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-3">
                 {workspaceCards.map((item, idx) => (
                   (() => {
                     const key = item.workspaceId || item.id || `${item.title}-${item.createdAt || idx}`;
@@ -408,8 +408,8 @@ export function DashboardPage() {
                     return (
                       <article
                         key={key}
-                        className={`group relative overflow-hidden rounded-2xl border border-arxio-outline-variant/20 bg-white p-5 transition-all ${
-                          item.canOpen ? "cursor-pointer hover:-translate-y-0.5 hover:border-arxio-primary-container/40 hover:shadow-[0_14px_28px_rgba(15,23,42,0.12)]" : ""
+                        className={`group relative overflow-hidden rounded-2xl border border-arxio-outline-variant/20 bg-white p-4 transition-all sm:p-5 ${
+                          item.canOpen ? "cursor-pointer hover:-translate-y-0.5 hover:border-arxio-primary-container/40 hover:shadow-[0_16px_30px_rgba(15,23,42,0.12)]" : ""
                         }`}
                         onClick={() => {
                           if (!item.canOpen || !item.workspaceId) return;
@@ -431,12 +431,12 @@ export function DashboardPage() {
                             }
                           />
                         </div>
-                        <p className="relative mb-1 truncate text-base font-bold text-arxio-on-surface group-hover:text-blue-700">
+                        <p className="relative mb-1 truncate text-[15px] font-bold text-arxio-on-surface group-hover:text-blue-700 sm:text-base">
                           {item.title}
                         </p>
-                        <p className="relative mb-5 line-clamp-2 text-xs leading-relaxed text-arxio-on-surface-variant/75">{item.subtitle}</p>
+                        <p className="relative mb-4 line-clamp-2 text-xs leading-relaxed text-arxio-on-surface-variant/75">{item.subtitle}</p>
                         <p className="relative mb-3 text-[9px] uppercase tracking-widest text-arxio-on-surface-variant/55">Created {formatDate(item.createdAt)}</p>
-                        <div className="relative grid grid-cols-2 gap-4 rounded-xl border border-arxio-outline-variant/15 bg-arxio-surface-low px-3 py-3 text-xs">
+                        <div className="relative grid grid-cols-2 gap-3 rounded-xl border border-arxio-outline-variant/15 bg-arxio-surface-low px-3 py-3 text-xs sm:gap-4">
                           <div>
                             <p className="mb-1 text-[9px] uppercase tracking-widest text-arxio-on-surface-variant/55">{item.labelA}</p>
                             <p className="text-sm font-bold tracking-tight text-arxio-on-surface">{item.metricA}</p>
@@ -446,11 +446,14 @@ export function DashboardPage() {
                             <p className="text-sm font-bold tracking-tight text-arxio-on-surface">{item.metricB}</p>
                           </div>
                         </div>
+                        <div className="relative mt-3 h-1.5 overflow-hidden rounded-full bg-slate-100">
+                          <span className={`block h-full rounded-full ${isCompleted ? "w-full bg-emerald-500" : "w-2/3 bg-blue-500"}`} />
+                        </div>
                         {item.canOpen ? (
                           <div className="relative mt-4 flex flex-wrap items-center gap-2">
                             <button
                               type="button"
-                              className="rounded-lg border border-arxio-outline-variant/30 bg-white px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-arxio-primary transition hover:bg-arxio-surface-low"
+                              className="rounded-lg border border-arxio-outline-variant/30 bg-white px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-arxio-primary transition hover:bg-arxio-surface-low"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 navigate(`/workspace/${item.workspaceId}`);
@@ -461,7 +464,7 @@ export function DashboardPage() {
                             {!isCompleted ? (
                               <button
                                 type="button"
-                                className="group/refresh relative overflow-hidden rounded-lg bg-gradient-to-br from-arxio-primary-container to-arxio-inverse-primary px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-70"
+                                className="group/refresh relative overflow-hidden rounded-lg bg-gradient-to-br from-arxio-primary-container to-arxio-inverse-primary px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-70"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   onFetchLatestStatus(item.workspaceId);

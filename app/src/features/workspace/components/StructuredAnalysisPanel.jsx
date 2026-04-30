@@ -22,6 +22,12 @@ const MODE_GROUPS = [
   { id: "revise", label: "Revise", tabIds: ["qa", "cheat", "reference"] },
 ];
 
+const MODE_SUBTITLE = {
+  understand: "Concepts, story, methods",
+  present: "Script and slide flow",
+  revise: "Viva, cheat sheet, references",
+};
+
 const CORE_LABELS = {
   problem: "Problem",
   solution: "Solution",
@@ -612,10 +618,15 @@ export const StructuredAnalysisPanel = memo(function StructuredAnalysisPanel({ a
       role="region"
       aria-label="Structured paper analysis"
     >
-      <div className="sticky top-0 z-10 border-b border-slate-200 bg-gradient-to-r from-white to-slate-50 px-3 py-3 sm:px-4">
-        <div className="mb-3">
-          <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">Study mode</p>
-          <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
+      <div className="z-10 border-b border-slate-200 bg-gradient-to-r from-white to-slate-50 px-3 py-3 sm:px-4">
+        <div className="mb-3 flex items-center justify-between gap-2">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">Study mode</p>
+          <span className="rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-semibold text-slate-500">
+            {visibleTabs.findIndex((item) => item.id === activeTab) + 1}/{visibleTabs.length}
+          </span>
+        </div>
+
+        <div className="grid gap-2 sm:grid-cols-3">
           {MODE_GROUPS.map((item) => (
             <button
               key={item.id}
@@ -626,37 +637,37 @@ export const StructuredAnalysisPanel = memo(function StructuredAnalysisPanel({ a
                   setTab(item.tabIds[0]);
                 }
               }}
-              className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+              className={`rounded-xl border px-3 py-2 text-left transition ${
                 mode === item.id
-                  ? "bg-blue-600 text-white"
-                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                  ? "border-blue-300 bg-blue-50"
+                  : "border-slate-200 bg-white hover:border-slate-300"
               }`}
             >
-              {item.label}
+              <p className={`text-xs font-semibold ${mode === item.id ? "text-blue-700" : "text-slate-800"}`}>{item.label}</p>
+              <p className="mt-0.5 text-[11px] text-slate-500">{MODE_SUBTITLE[item.id]}</p>
+              <p className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-slate-400">{item.tabIds.length} sections</p>
             </button>
           ))}
-          </div>
         </div>
-        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-          <label htmlFor="analysis-section-select" className="text-[11px] text-slate-500">
-            Section
-          </label>
-          <select
-            id="analysis-section-select"
-            value={activeTab}
-            onChange={(e) => setTab(e.target.value)}
-            className="w-full min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 outline-none transition focus:border-blue-400 sm:min-w-[210px] sm:w-auto"
-            aria-label="Analysis sections"
-          >
-            {visibleTabs.map((t) => (
-              <option key={t.id} value={t.id}>
+
+        <div className="mt-3 -mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1">
+          {visibleTabs.map((t) => {
+            const active = t.id === activeTab;
+            return (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => setTab(t.id)}
+                className={`shrink-0 rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
+                  active
+                    ? "border-blue-300 bg-blue-600 text-white"
+                    : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-900"
+                }`}
+              >
                 {t.label}
-              </option>
-            ))}
-          </select>
-          <p className="text-[11px] text-slate-500 sm:text-xs">
-            {visibleTabs.findIndex((item) => item.id === activeTab) + 1}/{visibleTabs.length}
-          </p>
+              </button>
+            );
+          })}
         </div>
       </div>
       <div className="max-h-[min(72vh,56rem)] overflow-y-auto p-3 sm:p-4 md:p-6" role="tabpanel">
