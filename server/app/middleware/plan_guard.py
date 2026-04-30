@@ -1,4 +1,4 @@
-from fastapi import Request, Depends
+from fastapi import Depends, HTTPException, Request
 from app.middleware.auth import get_current_user
 from app.models.plan import get_plan_limits
 from app.core.database import get_database
@@ -12,9 +12,10 @@ def require_feature(feature: str):
     ) -> dict:
         limits = await get_plan_limits(current_user["plan"])
         if not limits.get(feature, False):
-            err = Exception(f"'{feature}' is not available on your current plan. Please upgrade.")
-            err.status_code = 403
-            raise err
+            raise HTTPException(
+                status_code=403,
+                detail=f"'{feature}' is not available on your current plan. Please upgrade.",
+            )
         return current_user
     return guard
 
@@ -48,9 +49,10 @@ def require_usage(usage_field: str):
         used = user.get(db_field, 0) if user else 0
 
         if used >= limit:
-            err = Exception(f"You have reached your {usage_field.replace('_', ' ')} limit for this month. Please upgrade.")
-            err.status_code = 403
-            raise err
+            raise HTTPException(
+                status_code=403,
+                detail=f"You have reached your {usage_field.replace('_', ' ')} limit for this month. Please upgrade.",
+            )
 
         return current_user
     return guard

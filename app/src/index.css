@@ -1,34 +1,69 @@
 @import "tailwindcss";
 
 @theme {
-  --color-arxio-bg: #0b1326;
-  --color-arxio-surface-lowest: #060e20;
-  --color-arxio-surface-low: #131b2e;
-  --color-arxio-surface-container: #171f33;
-  --color-arxio-surface-container-high: #222a3d;
-  --color-arxio-surface-container-highest: #2d3449;
-  --color-arxio-primary: #b4c5ff;
+  --color-arxio-bg: #f8fafc;
+  --color-arxio-surface-lowest: #ffffff;
+  --color-arxio-surface-low: #f1f5f9;
+  --color-arxio-surface-container: #eef2ff;
+  --color-arxio-surface-container-high: #e2e8f0;
+  --color-arxio-surface-container-highest: #cbd5e1;
+  --color-arxio-primary: #1d4ed8;
   --color-arxio-primary-container: #0f62fe;
   --color-arxio-inverse-primary: #0052dd;
-  --color-arxio-on-surface: #dae2fd;
-  --color-arxio-on-surface-variant: #c3c6d8;
-  --color-arxio-outline-variant: #424656;
-  --color-arxio-tertiary: #7bd0ff;
+  --color-arxio-on-surface: #0f172a;
+  --color-arxio-on-surface-variant: #475569;
+  --color-arxio-outline-variant: #cbd5e1;
+  --color-arxio-tertiary: #0284c7;
   --color-arxio-tertiary-container: #0078a2;
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
 @layer utilities {
   .arxio-glass {
-    background: rgba(23, 31, 51, 0.6);
-    backdrop-filter: blur(20px);
-    border-top: 1px solid rgba(195, 198, 216, 0.2);
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(14px);
+    border-top: 1px solid rgba(148, 163, 184, 0.22);
   }
   .arxio-active-tab-glow {
     box-shadow: 0 0 15px rgba(15, 98, 254, 0.15);
   }
   .arxio-header-shadow {
-    box-shadow: 0 40px 40px -5px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 12px 30px -18px rgba(15, 23, 42, 0.28);
+  }
+  .arxio-grid-overlay {
+    background-image:
+      linear-gradient(to right, rgba(66, 70, 86, 0.16) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(66, 70, 86, 0.16) 1px, transparent 1px);
+    background-size: 36px 36px;
+  }
+  .arxio-premium-text {
+    background: linear-gradient(135deg, #1d4ed8 0%, #0f62fe 45%, #0284c7 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .arxio-orb {
+    filter: blur(38px);
+    opacity: 0.18;
+    pointer-events: none;
+  }
+
+  .arxio-workspace-hero-mask {
+    mask-image: linear-gradient(to bottom, black 0%, black 70%, transparent 100%);
+  }
+
+  .arxio-tab-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(148, 163, 184, 0.9) transparent;
+  }
+
+  .arxio-tab-scroll::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .arxio-tab-scroll::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.9);
+    border-radius: 999px;
   }
 }
 

@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta, timezone
 from typing import Any
 import bcrypt
+from fastapi import HTTPException
 from jose import JWTError, jwt
 from app.core.config import settings
 
@@ -27,6 +28,4 @@ def decode_token(token: str) -> dict[str, Any]:
     try:
         return jwt.decode(token, settings.jwt_secret, algorithms=["HS256"])
     except JWTError:
-        err = Exception("Invalid or expired token")
-        err.status_code = 401
-        raise err
+        raise HTTPException(status_code=401, detail="Invalid or expired token")

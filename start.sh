@@ -87,10 +87,14 @@ start_server() {
   log "Starting Celery worker..."
   if command -v uv >/dev/null 2>&1; then
     uv run celery -A app.workers.celery_app worker --loglevel=info &
+  elif [ -x "$ROOT/server/.venv/bin/python" ]; then
+    "$ROOT/server/.venv/bin/python" -m celery -A app.workers.celery_app worker --loglevel=info &
+  elif [ -x "$ROOT/.venv/bin/python" ]; then
+    "$ROOT/.venv/bin/python" -m celery -A app.workers.celery_app worker --loglevel=info &
   elif [ -x "$ROOT/server/.venv/bin/celery" ]; then
     "$ROOT/server/.venv/bin/celery" -A app.workers.celery_app worker --loglevel=info &
   else
-    python3 -m celery -A app.workers.celery_app worker --loglevel=info &
+    die "Cannot start Celery: use server/.venv (cd server && ./.venv/bin/pip install -e .) or install uv."
   fi
   CELERY_PID=$!
   ok "Celery running (pid $CELERY_PID)"

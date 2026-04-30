@@ -2,6 +2,12 @@ import Link from "next/link";
 import { LogoWordmark } from "./components/Logo";
 import { PLANS_DATA } from "./lib/data";
 
+const APP_BASE_URL = (process.env.NEXT_PUBLIC_APP_URL || "").replace(/\/$/, "");
+const DEFAULT_APP_ORIGIN = process.env.NODE_ENV === "development" ? "http://127.0.0.1:5173" : "";
+const APP_ORIGIN = APP_BASE_URL || DEFAULT_APP_ORIGIN;
+const APP_SIGNIN_URL = APP_ORIGIN ? `${APP_ORIGIN}/signin` : "/signin";
+const APP_SIGNUP_URL = APP_ORIGIN ? `${APP_ORIGIN}/signup` : "/signup";
+
 const JOURNEY_STEPS = [
   {
     title: "Upload the paper",
@@ -30,6 +36,14 @@ const PROOF = [
   { value: "10 min", label: "average generation" },
   { value: "15 slides", label: "ready-to-present deck" },
   { value: "3 clicks", label: "upload to workspace" },
+];
+
+const TRUST_STRIP = [
+  "Trusted by student labs",
+  "Built for researchers",
+  "Enterprise-ready security model",
+  "Outputs in minutes, not hours",
+  "Presentation-first workflow",
 ];
 
 const USERS = [
@@ -97,11 +111,11 @@ function ArrowIcon() {
 
 function Hero() {
   return (
-    <section className="relative overflow-hidden border-b border-border bg-white">
+    <section className="relative overflow-hidden border-b border-border bg-surface">
       <div className="absolute inset-0 hero-grid opacity-40" />
-      <div className="absolute -top-20 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-brand/15 blur-3xl" />
+      <div className="hero-aurora absolute -top-20 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-brand/15 blur-3xl" />
       <div className="relative mx-auto grid w-full max-w-6xl gap-12 px-5 pb-20 pt-28 md:px-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
-        <div>
+        <div className="wow-rise">
           <p className="mb-4 inline-flex items-center rounded-full border border-brand-muted bg-brand-light px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-brand">
             Research, simplified
           </p>
@@ -115,18 +129,13 @@ function Hero() {
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
-              href="/pricing"
-              className="inline-flex items-center gap-2 rounded-xl bg-brand px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand/25 transition hover:-translate-y-0.5 hover:bg-brand-dark"
+              href={APP_SIGNUP_URL}
+              className="cta-magnetic cta-primary inline-flex items-center gap-2 rounded-xl bg-brand px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand/25"
             >
               Start free
               <ArrowIcon />
             </Link>
-            <a
-              href="#journey"
-              className="inline-flex items-center gap-2 rounded-xl border border-border bg-white px-6 py-3 text-sm font-semibold text-ink transition hover:border-brand-muted hover:bg-surface"
-            >
-              See user journey
-            </a>
+            
           </div>
           <div className="mt-9 grid max-w-lg grid-cols-3 gap-6 border-t border-border pt-6">
             {PROOF.map((item) => (
@@ -138,26 +147,42 @@ function Hero() {
           </div>
         </div>
 
-        <div className="rounded-3xl border border-border bg-white p-6 shadow-xl shadow-brand/10">
+        <div className="hero-card-float wow-rise-delay-1 rounded-3xl border border-border bg-surface-container p-6 shadow-xl shadow-brand/10">
           <div className="mb-5 flex items-center gap-2">
             <span className="h-2.5 w-2.5 rounded-full bg-[#fc635d]" />
             <span className="h-2.5 w-2.5 rounded-full bg-[#fdbc40]" />
             <span className="h-2.5 w-2.5 rounded-full bg-[#34c749]" />
             <span className="ml-auto text-xs text-subtle">arxio.in</span>
           </div>
-          <div className="rounded-2xl border border-border bg-surface p-4">
-            <p className="text-xs font-semibold text-subtle">Uploaded</p>
-            <p className="mt-1 text-sm font-semibold text-ink">lane_detection_vilds.pdf</p>
+          <div className="workflow-card rounded-2xl border border-border bg-surface p-4">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-semibold text-subtle">Live workflow</p>
+              <span className="rounded-full border border-brand/40 bg-brand/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-brand">
+                Simulation
+              </span>
+            </div>
+            <p className="mt-2 text-sm font-semibold text-ink">lane_detection_vilds.pdf</p>
             <p className="mt-1 text-xs text-muted">48 pages • 2.1 MB</p>
-          </div>
-          <div className="mt-4 rounded-2xl border border-brand-muted bg-brand-light p-4">
-            <p className="text-xs font-semibold text-brand">Workspace ready</p>
-            <ul className="mt-3 grid grid-cols-2 gap-2 text-xs font-medium text-ink">
-              {OUTPUTS.slice(0, 4).map((item) => (
-                <li key={item} className="rounded-lg border border-brand-muted bg-white px-2.5 py-2">
-                  {item}
-                </li>
-              ))}
+            <div className="workflow-progress mt-3 overflow-hidden rounded-full bg-surface-container-high">
+              <div className="workflow-progress-fill h-1.5 rounded-full bg-linear-to-r from-brand to-[#60a5fa]" />
+            </div>
+            <ul className="mt-3 space-y-2 text-xs">
+              <li className="workflow-stage workflow-stage-1 flex items-center justify-between rounded-lg border border-border bg-surface-container px-2.5 py-2">
+                <span className="text-muted">Upload complete</span>
+                <span className="workflow-chip rounded-full px-2 py-0.5 text-[10px] font-semibold">Done</span>
+              </li>
+              <li className="workflow-stage workflow-stage-2 flex items-center justify-between rounded-lg border border-border bg-surface-container px-2.5 py-2">
+                <span className="text-muted">Parsing sections & tables</span>
+                <span className="workflow-chip rounded-full px-2 py-0.5 text-[10px] font-semibold">Running</span>
+              </li>
+              <li className="workflow-stage workflow-stage-3 flex items-center justify-between rounded-lg border border-border bg-surface-container px-2.5 py-2">
+                <span className="text-muted">Generating deck + Q&A</span>
+                <span className="workflow-chip rounded-full px-2 py-0.5 text-[10px] font-semibold">Queued</span>
+              </li>
+              <li className="workflow-stage workflow-stage-4 flex items-center justify-between rounded-lg border border-border bg-surface-container px-2.5 py-2">
+                <span className="text-muted">Workspace ready</span>
+                <span className="workflow-chip rounded-full px-2 py-0.5 text-[10px] font-semibold">Ready</span>
+              </li>
             </ul>
           </div>
           <p className="mt-4 text-xs text-muted">From upload to complete workspace, typically under 10 minutes.</p>
@@ -167,9 +192,26 @@ function Hero() {
   );
 }
 
+function TrustStrip() {
+  return (
+    <section className="border-y border-border bg-surface-low py-4">
+      <div className="marquee-wrap">
+        <div className="marquee-track">
+          {[...TRUST_STRIP, ...TRUST_STRIP].map((item, idx) => (
+            <div key={`${item}-${idx}`} className="inline-flex items-center gap-3 px-6 text-xs uppercase tracking-wider text-subtle">
+              <span className="h-1.5 w-1.5 rounded-full bg-brand/80" />
+              <span>{item}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function UserJourney() {
   return (
-    <section id="journey" className="mx-auto w-full max-w-6xl px-5 py-20 md:px-8">
+    <section id="journey" className="mx-auto w-full max-w-6xl px-5 py-20 md:px-8 wow-rise">
       <div className="mb-12 text-center">
         <p className="text-[11px] font-semibold uppercase tracking-widest text-brand">Product journey</p>
         <h2 className="mt-3 font-display text-4xl font-extrabold tracking-[-0.03em] text-ink md:text-5xl">
@@ -181,7 +223,7 @@ function UserJourney() {
       </div>
       <div className="grid gap-5 md:grid-cols-3">
         {JOURNEY_STEPS.map((step, idx) => (
-          <article key={step.title} className="rounded-2xl border border-border bg-white p-6 shadow-sm">
+          <article key={step.title} className={`rounded-2xl border border-border bg-surface-container p-6 shadow-sm wow-rise-delay-${(idx % 3) + 1}`}>
             <p className="font-display text-4xl font-bold text-brand-muted">{String(idx + 1).padStart(2, "0")}</p>
             <h3 className="mt-4 font-display text-xl font-bold text-ink">{step.title}</h3>
             <p className="mt-2 text-sm leading-relaxed text-muted">{step.description}</p>
@@ -194,7 +236,7 @@ function UserJourney() {
 
 function NightBeforeComparison() {
   return (
-    <section className="border-y border-border bg-white py-20">
+    <section className="border-y border-border bg-surface py-20 wow-rise">
       <div className="mx-auto w-full max-w-6xl px-5 md:px-8">
         <div className="mb-10 text-center">
           <p className="text-[11px] font-semibold uppercase tracking-widest text-brand">Reality check</p>
@@ -208,13 +250,13 @@ function NightBeforeComparison() {
           </p>
         </div>
         <div className="overflow-hidden rounded-2xl border border-border bg-surface">
-          <div className="grid grid-cols-[120px_1fr_1fr] bg-white text-xs font-semibold uppercase tracking-wider text-subtle">
+          <div className="grid grid-cols-[120px_1fr_1fr] bg-surface-container text-xs font-semibold uppercase tracking-wider text-subtle">
             <div className="border-r border-border px-4 py-3">Time</div>
             <div className="border-r border-border px-4 py-3">Without Arxio</div>
             <div className="px-4 py-3 text-brand">With Arxio</div>
           </div>
           {NIGHT_BEFORE.map((row, idx) => (
-            <div key={row.time} className={`grid grid-cols-[120px_1fr_1fr] ${idx % 2 === 0 ? "bg-surface" : "bg-white"}`}>
+            <div key={row.time} className={`grid grid-cols-[120px_1fr_1fr] ${idx % 2 === 0 ? "bg-surface" : "bg-surface-container"}`}>
               <div className="border-r border-t border-border px-4 py-4 text-xs font-semibold text-ink">{row.time}</div>
               <div className="border-r border-t border-border px-4 py-4 text-sm text-muted">{row.without}</div>
               <div className="border-t border-border px-4 py-4 text-sm font-medium text-ink">{row.withArxio}</div>
@@ -228,7 +270,7 @@ function NightBeforeComparison() {
 
 function OutputsSection() {
   return (
-    <section className="border-y border-border bg-surface py-20">
+    <section className="border-y border-border bg-surface py-20 wow-rise">
       <div className="mx-auto w-full max-w-6xl px-5 md:px-8">
         <div className="grid gap-10 lg:grid-cols-[1fr_1fr] lg:items-start">
           <div>
@@ -244,7 +286,7 @@ function OutputsSection() {
           </div>
           <ul className="grid gap-3 sm:grid-cols-2">
             {OUTPUTS.map((item) => (
-              <li key={item} className="flex items-center gap-2 rounded-xl border border-border bg-white px-4 py-3 text-sm font-semibold text-ink">
+              <li key={item} className="flex items-center gap-2 rounded-xl border border-border bg-surface-container px-4 py-3 text-sm font-semibold text-ink">
                 <span className="text-brand">
                   <CheckIcon />
                 </span>
@@ -260,7 +302,7 @@ function OutputsSection() {
 
 function FirstImpressionSection() {
   return (
-    <section className="mx-auto w-full max-w-6xl px-5 py-20 md:px-8">
+    <section className="mx-auto w-full max-w-6xl px-5 py-20 md:px-8 wow-rise">
       <div className="mb-10 text-center">
         <p className="text-[11px] font-semibold uppercase tracking-widest text-brand">What users notice first</p>
         <h2 className="mt-3 font-display text-4xl font-extrabold tracking-[-0.03em] text-ink md:text-5xl">
@@ -273,7 +315,7 @@ function FirstImpressionSection() {
 
       <div className="grid gap-5 lg:grid-cols-3">
         {FIRST_LOOK.map((item) => (
-          <article key={item.title} className="relative overflow-hidden rounded-2xl border border-border bg-white p-6 shadow-sm">
+          <article key={item.title} className="relative overflow-hidden rounded-2xl border border-border bg-surface-container p-6 shadow-sm wow-rise-delay-1">
             <div className={`pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-linear-to-br ${item.tone} blur-2xl`} />
             <div className="relative">
               <p className="text-[11px] font-semibold uppercase tracking-wider text-subtle">First 30 seconds</p>
@@ -299,19 +341,19 @@ function FirstImpressionSection() {
 
 function VisualBreak() {
   return (
-    <section className="border-y border-border bg-ink py-14">
+    <section className="border-y border-border bg-surface-low py-14 wow-rise">
       <div className="mx-auto w-full max-w-6xl px-5 md:px-8">
         <div className="grid items-center gap-8 md:grid-cols-[1fr_auto_1fr]">
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+          <div className="rounded-2xl border border-border bg-white p-5">
             <p className="text-xs font-semibold uppercase tracking-wider text-subtle">Before</p>
-            <p className="mt-2 font-display text-2xl font-bold text-white">Scattered notes, uncertain slides, last-minute stress</p>
+            <p className="mt-2 font-display text-2xl font-bold text-ink">Scattered notes, uncertain slides, last-minute stress</p>
           </div>
           <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-brand text-white shadow-lg shadow-brand/40">
             <ArrowIcon />
           </div>
-          <div className="rounded-2xl border border-brand/40 bg-brand/15 p-5">
-            <p className="text-xs font-semibold uppercase tracking-wider text-blue-100">After</p>
-            <p className="mt-2 font-display text-2xl font-bold text-white">Structured workspace, polished deck, confident delivery</p>
+          <div className="rounded-2xl border border-brand/30 bg-blue-50 p-5">
+            <p className="text-xs font-semibold uppercase tracking-wider text-brand-muted">After</p>
+            <p className="mt-2 font-display text-2xl font-bold text-ink">Structured workspace, polished deck, confident delivery</p>
           </div>
         </div>
       </div>
@@ -321,7 +363,7 @@ function VisualBreak() {
 
 function WhoItsFor() {
   return (
-    <section className="mx-auto w-full max-w-6xl px-5 py-20 md:px-8">
+    <section className="mx-auto w-full max-w-6xl px-5 py-20 md:px-8 wow-rise">
       <div className="mb-10 text-center">
         <p className="text-[11px] font-semibold uppercase tracking-widest text-brand">Who it serves</p>
         <h2 className="mt-3 font-display text-4xl font-extrabold tracking-[-0.03em] text-ink md:text-5xl">
@@ -332,7 +374,7 @@ function WhoItsFor() {
       </div>
       <div className="grid gap-5 md:grid-cols-3">
         {USERS.map((user) => (
-          <article key={user.role} className="rounded-2xl border border-border bg-white p-6 shadow-sm">
+          <article key={user.role} className="rounded-2xl border border-border bg-surface-container p-6 shadow-sm wow-rise-delay-2">
             <h3 className="font-display text-xl font-bold text-ink">{user.role}</h3>
             <p className="mt-3 text-xs font-semibold uppercase tracking-wider text-subtle">Today&apos;s pain</p>
             <p className="mt-1 text-sm text-muted">{user.pain}</p>
@@ -354,7 +396,7 @@ function PricingPreview() {
   }));
 
   return (
-    <section id="pricing" className="border-y border-border bg-surface py-20">
+    <section id="pricing" className="border-y border-border bg-surface py-20 wow-rise">
       <div className="mx-auto w-full max-w-6xl px-5 md:px-8">
         <div className="mb-10 text-center">
           <p className="text-[11px] font-semibold uppercase tracking-widest text-brand">Pricing</p>
@@ -369,8 +411,8 @@ function PricingPreview() {
               className={`rounded-2xl border p-5 ${
                 plan.highlight
                   ? "border-brand bg-brand text-white shadow-xl shadow-brand/30"
-                  : "border-border bg-white text-ink"
-              }`}
+                  : "border-border bg-surface-container text-ink"
+              } wow-rise-delay-3`}
             >
               <p className={`text-[11px] font-semibold uppercase tracking-wider ${plan.highlight ? "text-blue-100" : "text-subtle"}`}>
                 {plan.name}
@@ -384,7 +426,7 @@ function PricingPreview() {
           ))}
         </div>
         <div className="mt-8 text-center">
-          <Link href="/pricing" className="inline-flex items-center gap-2 rounded-xl border border-border bg-white px-5 py-3 text-sm font-semibold text-ink transition hover:border-brand-muted hover:bg-brand-light hover:text-brand">
+          <Link href="/pricing" className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface-container px-5 py-3 text-sm font-semibold text-ink transition hover:border-brand-muted hover:bg-brand-light hover:text-brand">
             Compare all features
             <ArrowIcon />
           </Link>
@@ -396,13 +438,13 @@ function PricingPreview() {
 
 function FinalCta() {
   return (
-    <section className="mx-auto w-full max-w-6xl px-5 py-20 md:px-8">
-      <div className="relative overflow-hidden rounded-3xl bg-ink px-8 py-14 text-center md:px-14">
-        <div className="pointer-events-none absolute -left-12 top-0 h-56 w-56 rounded-full bg-brand/30 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-10 right-0 h-56 w-56 rounded-full bg-brand/20 blur-3xl" />
+    <section className="mx-auto w-full max-w-6xl px-5 py-20 md:px-8 wow-rise">
+      <div className="relative overflow-hidden rounded-3xl border border-border bg-surface-low px-8 py-14 text-center md:px-14">
+        <div className="hero-aurora pointer-events-none absolute -left-12 top-0 h-56 w-56 rounded-full bg-brand/30 blur-3xl" />
+        <div className="hero-aurora pointer-events-none absolute -bottom-10 right-0 h-56 w-56 rounded-full bg-brand/20 blur-3xl" />
         <div className="relative">
           <p className="text-[11px] font-semibold uppercase tracking-widest text-brand">Ready to begin</p>
-          <h2 className="mt-3 font-display text-4xl font-extrabold tracking-[-0.03em] text-white md:text-5xl">
+          <h2 className="mt-3 font-display text-4xl font-extrabold tracking-[-0.03em] text-ink md:text-5xl">
             Break the panic loop.
             <br />
             Prepare smarter with Arxio.
@@ -414,7 +456,7 @@ function FinalCta() {
             <Link href="/pricing" className="rounded-xl bg-brand px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-dark">
               Start free now
             </Link>
-            <Link href="/vision" className="rounded-xl border border-white/20 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
+            <Link href="/vision" className="rounded-xl border border-border px-6 py-3 text-sm font-semibold text-ink transition hover:bg-surface-container">
               Read the vision
             </Link>
           </div>
@@ -426,9 +468,9 @@ function FinalCta() {
 
 function Footer() {
   return (
-    <footer className="border-t border-border bg-white py-10">
+    <footer className="border-t border-border bg-surface py-10">
       <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-5 px-5 text-sm text-muted md:flex-row md:px-8">
-        <LogoWordmark size={26} />
+        <LogoWordmark size={26} tone="dark" />
         <nav className="flex flex-wrap items-center justify-center gap-5">
           <Link href="/pricing" className="transition hover:text-ink">Pricing</Link>
           <Link href="/vision" className="transition hover:text-ink">Vision</Link>
@@ -445,9 +487,9 @@ function Footer() {
 export default function Page() {
   return (
     <main>
-      <header className="fixed inset-x-0 top-0 z-40 border-b border-border/70 bg-white/90 backdrop-blur">
+      <header className="fixed inset-x-0 top-0 z-40 border-b border-border/70 bg-surface-low/90 backdrop-blur">
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-5 md:px-8">
-          <LogoWordmark size={28} />
+          <LogoWordmark size={28} tone="dark" />
           <div className="flex items-center gap-2">
             <Link href="/pricing" className="rounded-lg px-4 py-2 text-sm font-medium text-muted transition hover:bg-surface hover:text-ink">
               Pricing
@@ -455,13 +497,17 @@ export default function Page() {
             <Link href="/vision" className="rounded-lg px-4 py-2 text-sm font-medium text-muted transition hover:bg-surface hover:text-ink">
               Vision
             </Link>
-            <Link href="/pricing" className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-dark">
+            <Link href={APP_SIGNIN_URL} className="rounded-lg px-4 py-2 text-sm font-medium text-muted transition hover:bg-surface hover:text-ink">
+              Sign in
+            </Link>
+            <Link href={APP_SIGNUP_URL} className="cta-magnetic cta-primary rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white">
               Try free
             </Link>
           </div>
         </div>
       </header>
       <Hero />
+      <TrustStrip />
       <NightBeforeComparison />
       <UserJourney />
       <FirstImpressionSection />

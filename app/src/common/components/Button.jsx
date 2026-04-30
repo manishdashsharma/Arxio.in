@@ -1,10 +1,10 @@
 import { cn } from "../utils/cn";
 
 const variants = {
-  primary: "bg-blue-500 text-white hover:bg-blue-400",
-  secondary: "bg-slate-700 text-slate-100 hover:bg-slate-600",
-  outline: "border border-slate-500 bg-transparent text-slate-100 hover:bg-slate-800",
-  ghost: "bg-transparent text-slate-200 hover:bg-slate-800",
+  primary: "bg-blue-600 text-white hover:bg-blue-500",
+  secondary: "bg-slate-200 text-slate-800 hover:bg-slate-300",
+  outline: "border border-slate-300 bg-white text-slate-700 hover:bg-slate-50",
+  ghost: "bg-transparent text-slate-700 hover:bg-slate-100",
   danger: "bg-rose-500 text-white hover:bg-rose-400",
 };
 

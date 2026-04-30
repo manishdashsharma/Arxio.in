@@ -5,7 +5,6 @@ import { useAuth } from "../../core/auth/use-auth";
 import { activatePlan, listPlans } from "../../core/api/subscription-api";
 import { usePlan } from "../../core/plan/use-plan";
 import { tierRank } from "../../core/plan/tier";
-import { CyberSidebar } from "../../features/dashboard/components/CyberSidebar";
 
 function formatMoney(price, currency) {
   const n = Number(price);
@@ -19,7 +18,7 @@ function formatMoney(price, currency) {
 }
 
 export function BillingPage() {
-  const { user, signOut, refreshUser } = useAuth();
+  const { refreshUser } = useAuth();
   const plan = usePlan();
   const [plans, setPlans] = useState([]);
   const [loadError, setLoadError] = useState("");
@@ -82,11 +81,8 @@ export function BillingPage() {
   }
 
   return (
-    <main className="min-h-screen bg-arxio-bg p-2 text-arxio-on-surface selection:bg-arxio-primary-container selection:text-white">
-      <div className="grid min-h-[calc(100vh-16px)] w-full gap-3 rounded-2xl border border-arxio-outline-variant/15 bg-arxio-surface-low p-3 md:grid-cols-[16rem_1fr]">
-        <CyberSidebar user={user} onSignOut={signOut} activeItem="billing" workspaceLink="/workspaces" />
-
-        <section className="flex min-h-0 flex-col overflow-y-auto rounded-xl border border-arxio-outline-variant/10 bg-arxio-bg px-5 pb-12 pt-8 md:px-10">
+    <>
+      <section className="flex h-full min-h-0 flex-col overflow-y-auto rounded-xl border border-arxio-outline-variant/10 bg-arxio-bg px-5 pb-12 pt-8 md:px-10">
           <header className="mb-8 flex flex-wrap items-start justify-between gap-4">
             <div>
               <h1 className="text-3xl font-bold tracking-tight text-arxio-on-surface">Plans &amp; allocation</h1>
@@ -162,9 +158,9 @@ export function BillingPage() {
                     </ul>
                     <div className="mt-5">
                       {isCurrent ? (
-                        <Button type="button" disabled className="w-full rounded-sm py-2 text-xs opacity-60">
+                        <p className="w-full rounded-sm border border-arxio-tertiary/30 bg-arxio-tertiary/10 px-3 py-2 text-center text-xs font-bold uppercase tracking-widest text-arxio-tertiary">
                           Your plan
-                        </Button>
+                        </p>
                       ) : isUpgrade ? (
                         <Button
                           type="button"
@@ -174,9 +170,9 @@ export function BillingPage() {
                           Upgrade
                         </Button>
                       ) : (
-                        <Button type="button" disabled className="w-full rounded-sm py-2 text-xs opacity-50" title="Downgrades are not self-serve in this build.">
-                          Lower tier
-                        </Button>
+                        <p className="w-full rounded-sm border border-arxio-outline-variant/25 bg-arxio-surface-container/30 px-3 py-2 text-center text-xs font-bold uppercase tracking-widest text-arxio-on-surface-variant/70">
+                          Lower tier via support
+                        </p>
                       )}
                       {isDowngrade && !isCurrent ? (
                         <p className="mt-2 text-[10px] text-arxio-on-surface-variant/60">Contact support to move to a lower tier.</p>
@@ -194,8 +190,7 @@ export function BillingPage() {
               <code className="text-arxio-primary">SUBSCRIPTION_ACCESS_KEY</code> to call activate locally.
             </p>
           ) : null}
-        </section>
-      </div>
+      </section>
 
       {activateOpen ? (
         <div
@@ -261,6 +256,6 @@ export function BillingPage() {
           </div>
         </div>
       ) : null}
-    </main>
+    </>
   );
 }
