@@ -5,8 +5,16 @@ import { PLANS_DATA } from "./lib/data";
 const APP_BASE_URL = (process.env.NEXT_PUBLIC_APP_URL || "").replace(/\/$/, "");
 const DEFAULT_APP_ORIGIN = process.env.NODE_ENV === "development" ? "http://127.0.0.1:5173" : "";
 const APP_ORIGIN = APP_BASE_URL || DEFAULT_APP_ORIGIN;
-const APP_SIGNIN_URL = APP_ORIGIN ? `${APP_ORIGIN}/signin` : "/signin";
-const APP_SIGNUP_URL = APP_ORIGIN ? `${APP_ORIGIN}/signup` : "/signup";
+const APP_SIGNIN_PATH = process.env.NEXT_PUBLIC_APP_SIGNIN_PATH || "/signin";
+const APP_SIGNUP_PATH = process.env.NEXT_PUBLIC_APP_SIGNUP_PATH || "/signup";
+
+function resolveAppUrl(path) {
+  const normalized = path.startsWith("/") ? path : `/${path}`;
+  return APP_ORIGIN ? `${APP_ORIGIN}${normalized}` : normalized;
+}
+
+const APP_SIGNIN_URL = resolveAppUrl(APP_SIGNIN_PATH);
+const APP_SIGNUP_URL = resolveAppUrl(APP_SIGNUP_PATH);
 
 const JOURNEY_STEPS = [
   {
