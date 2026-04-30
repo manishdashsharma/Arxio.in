@@ -184,24 +184,24 @@ body {
 @keyframes workflowActive {
   0%, 100% {
     border-color: rgba(203, 213, 225, 0.9);
-    background: rgba(241, 245, 249, 0.95);
-    color: #475569;
+    background: rgba(255, 255, 255, 0.96);
+    color: #334155;
   }
   12%, 24% {
-    border-color: rgba(37, 99, 235, 0.45);
-    background: rgba(37, 99, 235, 0.14);
-    color: #1e40af;
+    border-color: rgba(37, 99, 235, 0.4);
+    background: rgba(239, 246, 255, 0.95);
+    color: #1e3a8a;
   }
 }
 
 @keyframes workflowChip {
   0%, 100% {
-    background: rgba(226, 232, 240, 0.95);
-    color: #475569;
+    background: rgba(248, 250, 252, 0.98);
+    color: #334155;
   }
   12%, 24% {
-    background: rgba(37, 99, 235, 0.2);
-    color: rgba(191, 219, 254, 1);
+    background: rgba(219, 234, 254, 0.95);
+    color: #1e3a8a;
   }
 }
 
@@ -304,7 +304,7 @@ body {
 }
 
 .workflow-stage .workflow-chip {
-  border: 1px solid rgba(71, 85, 105, 0.4);
+  border: 1px solid rgba(148, 163, 184, 0.5);
 }
 
 .workflow-stage-1 {

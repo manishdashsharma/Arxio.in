@@ -111,81 +111,100 @@ function ArrowIcon() {
 
 function Hero() {
   return (
-    <section className="relative overflow-hidden border-b border-border bg-surface">
-      <div className="absolute inset-0 hero-grid opacity-40" />
-      <div className="hero-aurora absolute -top-20 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-brand/15 blur-3xl" />
-      <div className="relative mx-auto grid w-full max-w-6xl gap-12 px-5 pb-20 pt-28 md:px-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+    <section className="relative overflow-hidden border-b border-border bg-gradient-to-b from-white to-slate-50/60">
+      <div className="absolute inset-0 hero-grid opacity-30" />
+      <div className="hero-aurora absolute -top-20 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-brand/20 blur-3xl" />
+      <div className="hero-aurora absolute -right-20 top-10 h-72 w-72 rounded-full bg-indigo-200/30 blur-3xl" />
+      <div className="relative mx-auto grid w-full max-w-6xl gap-10 px-4 pb-16 pt-24 sm:px-5 md:px-8 md:pb-20 md:pt-28 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
         <div className="wow-rise">
-          <p className="mb-4 inline-flex items-center rounded-full border border-brand-muted bg-brand-light px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-brand">
-            Research, simplified
+          <p className="mb-4 inline-flex items-center rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-blue-700">
+            Student-first research workflow
           </p>
-          <h1 className="font-display text-5xl font-extrabold leading-[1.05] tracking-[-0.04em] text-ink md:text-6xl">
-            Upload tonight.
+          <h1 className="font-display text-4xl font-extrabold leading-[1.02] tracking-[-0.04em] text-ink sm:text-5xl md:text-6xl">
+            Upload in minutes.
             <br />
-            Present tomorrow.
+            Present like a pro.
           </h1>
-          <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted">
-            Arxio turns dense papers into a full presentation workspace in minutes, so students, researchers, and scholars spend less time stressing and more time learning.
+          <p className="mt-5 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
+            Arxio turns dense papers into a complete preparation workspace with slides, Q&A, notes, and script, all in one elegant flow.
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="mt-8 flex flex-wrap gap-2.5 sm:gap-3">
             <Link
               href={APP_SIGNUP_URL}
-              className="cta-magnetic cta-primary inline-flex items-center gap-2 rounded-xl bg-brand px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand/25"
+              className="cta-magnetic cta-primary inline-flex items-center justify-center gap-2 rounded-xl bg-brand px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-brand/25 sm:px-6"
             >
               Start free
               <ArrowIcon />
             </Link>
-            
+            <Link
+              href={APP_SIGNIN_URL}
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-white px-5 py-3 text-sm font-semibold text-ink transition hover:border-blue-200 hover:bg-blue-50 sm:px-6"
+            >
+              Sign in
+            </Link>
           </div>
-          <div className="mt-9 grid max-w-lg grid-cols-3 gap-6 border-t border-border pt-6">
+          <div className="mt-8 grid max-w-lg grid-cols-3 gap-3 border-t border-border pt-5 sm:mt-9 sm:gap-6 sm:pt-6">
             {PROOF.map((item) => (
               <div key={item.label}>
-                <p className="font-display text-2xl font-bold tracking-tight text-ink">{item.value}</p>
+                <p className="font-display text-xl font-bold tracking-tight text-ink sm:text-2xl">{item.value}</p>
                 <p className="mt-1 text-xs text-subtle">{item.label}</p>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="hero-card-float wow-rise-delay-1 rounded-3xl border border-border bg-surface-container p-6 shadow-xl shadow-brand/10">
+        <div className="hero-card-float wow-rise-delay-1 rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_24px_45px_rgba(15,23,42,0.1)]">
           <div className="mb-5 flex items-center gap-2">
             <span className="h-2.5 w-2.5 rounded-full bg-[#fc635d]" />
             <span className="h-2.5 w-2.5 rounded-full bg-[#fdbc40]" />
             <span className="h-2.5 w-2.5 rounded-full bg-[#34c749]" />
             <span className="ml-auto text-xs text-subtle">arxio.in</span>
           </div>
-          <div className="workflow-card rounded-2xl border border-border bg-surface p-4">
+          <div className="workflow-card rounded-2xl border border-slate-200 bg-surface p-4">
             <div className="flex items-center justify-between">
-              <p className="text-xs font-semibold text-subtle">Live workflow</p>
-              <span className="rounded-full border border-brand/40 bg-brand/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-brand">
+              <p className="text-xs font-semibold text-slate-600">Live workflow</p>
+              <span className="rounded-full border border-blue-300 bg-blue-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-blue-700">
                 Simulation
               </span>
             </div>
-            <p className="mt-2 text-sm font-semibold text-ink">lane_detection_vilds.pdf</p>
-            <p className="mt-1 text-xs text-muted">48 pages • 2.1 MB</p>
+            <p className="mt-2 text-sm font-semibold text-slate-900">lane_detection_vilds.pdf</p>
+            <p className="mt-1 text-xs text-slate-500">48 pages • 2.1 MB • CVPR style paper</p>
             <div className="workflow-progress mt-3 overflow-hidden rounded-full bg-surface-container-high">
               <div className="workflow-progress-fill h-1.5 rounded-full bg-linear-to-r from-brand to-[#60a5fa]" />
             </div>
             <ul className="mt-3 space-y-2 text-xs">
-              <li className="workflow-stage workflow-stage-1 flex items-center justify-between rounded-lg border border-border bg-surface-container px-2.5 py-2">
-                <span className="text-muted">Upload complete</span>
-                <span className="workflow-chip rounded-full px-2 py-0.5 text-[10px] font-semibold">Done</span>
+              <li className="workflow-stage workflow-stage-1 flex items-center justify-between rounded-xl border border-slate-200 bg-white px-3 py-2.5">
+                <span className="font-medium text-slate-700">Upload complete</span>
+                <span className="workflow-chip rounded-full border px-2 py-0.5 text-[10px] font-bold">Done</span>
               </li>
-              <li className="workflow-stage workflow-stage-2 flex items-center justify-between rounded-lg border border-border bg-surface-container px-2.5 py-2">
-                <span className="text-muted">Parsing sections & tables</span>
-                <span className="workflow-chip rounded-full px-2 py-0.5 text-[10px] font-semibold">Running</span>
+              <li className="workflow-stage workflow-stage-2 flex items-center justify-between rounded-xl border border-slate-200 bg-white px-3 py-2.5">
+                <span className="font-medium text-slate-700">Parsing sections & tables</span>
+                <span className="workflow-chip rounded-full border px-2 py-0.5 text-[10px] font-bold">Running</span>
               </li>
-              <li className="workflow-stage workflow-stage-3 flex items-center justify-between rounded-lg border border-border bg-surface-container px-2.5 py-2">
-                <span className="text-muted">Generating deck + Q&A</span>
-                <span className="workflow-chip rounded-full px-2 py-0.5 text-[10px] font-semibold">Queued</span>
+              <li className="workflow-stage workflow-stage-3 flex items-center justify-between rounded-xl border border-slate-200 bg-white px-3 py-2.5">
+                <span className="font-medium text-slate-700">Generating deck + Q&A</span>
+                <span className="workflow-chip rounded-full border px-2 py-0.5 text-[10px] font-bold">Queued</span>
               </li>
-              <li className="workflow-stage workflow-stage-4 flex items-center justify-between rounded-lg border border-border bg-surface-container px-2.5 py-2">
-                <span className="text-muted">Workspace ready</span>
-                <span className="workflow-chip rounded-full px-2 py-0.5 text-[10px] font-semibold">Ready</span>
+              <li className="workflow-stage workflow-stage-4 flex items-center justify-between rounded-xl border border-slate-200 bg-white px-3 py-2.5">
+                <span className="font-medium text-slate-700">Workspace ready</span>
+                <span className="workflow-chip rounded-full border px-2 py-0.5 text-[10px] font-bold">Ready</span>
               </li>
             </ul>
           </div>
-          <p className="mt-4 text-xs text-muted">From upload to complete workspace, typically under 10 minutes.</p>
+          <div className="mt-4 grid grid-cols-3 gap-2 text-center">
+            <div className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-2">
+              <p className="text-[10px] font-bold uppercase tracking-wide text-slate-500">Sections</p>
+              <p className="mt-1 text-xs font-semibold text-slate-900">12 extracted</p>
+            </div>
+            <div className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-2">
+              <p className="text-[10px] font-bold uppercase tracking-wide text-slate-500">Slides</p>
+              <p className="mt-1 text-xs font-semibold text-slate-900">15 + quick 5</p>
+            </div>
+            <div className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-2">
+              <p className="text-[10px] font-bold uppercase tracking-wide text-slate-500">ETA</p>
+              <p className="mt-1 text-xs font-semibold text-slate-900">&lt; 10 min</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -194,7 +213,7 @@ function Hero() {
 
 function TrustStrip() {
   return (
-    <section className="border-y border-border bg-surface-low py-4">
+    <section className="border-y border-border bg-white py-4">
       <div className="marquee-wrap">
         <div className="marquee-track">
           {[...TRUST_STRIP, ...TRUST_STRIP].map((item, idx) => (
@@ -211,10 +230,10 @@ function TrustStrip() {
 
 function UserJourney() {
   return (
-    <section id="journey" className="mx-auto w-full max-w-6xl px-5 py-20 md:px-8 wow-rise">
+    <section id="journey" className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-5 sm:py-20 md:px-8 wow-rise">
       <div className="mb-12 text-center">
         <p className="text-[11px] font-semibold uppercase tracking-widest text-brand">Product journey</p>
-        <h2 className="mt-3 font-display text-4xl font-extrabold tracking-[-0.03em] text-ink md:text-5xl">
+        <h2 className="mt-3 font-display text-3xl font-extrabold tracking-[-0.03em] text-ink sm:text-4xl md:text-5xl">
           Built for real deadlines.
         </h2>
         <p className="mx-auto mt-4 max-w-2xl text-base text-muted">
@@ -224,7 +243,7 @@ function UserJourney() {
       <div className="grid gap-5 md:grid-cols-3">
         {JOURNEY_STEPS.map((step, idx) => (
           <article key={step.title} className={`rounded-2xl border border-border bg-surface-container p-6 shadow-sm wow-rise-delay-${(idx % 3) + 1}`}>
-            <p className="font-display text-4xl font-bold text-brand-muted">{String(idx + 1).padStart(2, "0")}</p>
+            <p className="font-display text-3xl font-bold text-brand-muted sm:text-4xl">{String(idx + 1).padStart(2, "0")}</p>
             <h3 className="mt-4 font-display text-xl font-bold text-ink">{step.title}</h3>
             <p className="mt-2 text-sm leading-relaxed text-muted">{step.description}</p>
           </article>
@@ -236,11 +255,11 @@ function UserJourney() {
 
 function NightBeforeComparison() {
   return (
-    <section className="border-y border-border bg-surface py-20 wow-rise">
-      <div className="mx-auto w-full max-w-6xl px-5 md:px-8">
+    <section className="border-y border-border bg-white py-16 sm:py-20 wow-rise">
+      <div className="mx-auto w-full max-w-6xl px-4 sm:px-5 md:px-8">
         <div className="mb-10 text-center">
           <p className="text-[11px] font-semibold uppercase tracking-widest text-brand">Reality check</p>
-          <h2 className="mt-3 font-display text-4xl font-extrabold tracking-[-0.03em] text-ink md:text-5xl">
+          <h2 className="mt-3 font-display text-3xl font-extrabold tracking-[-0.03em] text-ink sm:text-4xl md:text-5xl">
             The night before.
             <br />
             With and without Arxio.
@@ -249,19 +268,21 @@ function NightBeforeComparison() {
             This is the exact user journey we optimize for: less panic, more preparedness, better outcomes.
           </p>
         </div>
-        <div className="overflow-hidden rounded-2xl border border-border bg-surface">
-          <div className="grid grid-cols-[120px_1fr_1fr] bg-surface-container text-xs font-semibold uppercase tracking-wider text-subtle">
-            <div className="border-r border-border px-4 py-3">Time</div>
-            <div className="border-r border-border px-4 py-3">Without Arxio</div>
-            <div className="px-4 py-3 text-brand">With Arxio</div>
-          </div>
-          {NIGHT_BEFORE.map((row, idx) => (
-            <div key={row.time} className={`grid grid-cols-[120px_1fr_1fr] ${idx % 2 === 0 ? "bg-surface" : "bg-surface-container"}`}>
-              <div className="border-r border-t border-border px-4 py-4 text-xs font-semibold text-ink">{row.time}</div>
-              <div className="border-r border-t border-border px-4 py-4 text-sm text-muted">{row.without}</div>
-              <div className="border-t border-border px-4 py-4 text-sm font-medium text-ink">{row.withArxio}</div>
+        <div className="overflow-x-auto rounded-2xl border border-border bg-surface">
+          <div className="min-w-[680px]">
+            <div className="grid grid-cols-[120px_1fr_1fr] bg-surface-container text-xs font-semibold uppercase tracking-wider text-subtle">
+              <div className="border-r border-border px-4 py-3">Time</div>
+              <div className="border-r border-border px-4 py-3">Without Arxio</div>
+              <div className="px-4 py-3 text-brand">With Arxio</div>
             </div>
-          ))}
+            {NIGHT_BEFORE.map((row, idx) => (
+              <div key={row.time} className={`grid grid-cols-[120px_1fr_1fr] ${idx % 2 === 0 ? "bg-surface" : "bg-surface-container"}`}>
+                <div className="border-r border-t border-border px-4 py-4 text-xs font-semibold text-ink">{row.time}</div>
+                <div className="border-r border-t border-border px-4 py-4 text-sm text-muted">{row.without}</div>
+                <div className="border-t border-border px-4 py-4 text-sm font-medium text-ink">{row.withArxio}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -270,12 +291,12 @@ function NightBeforeComparison() {
 
 function OutputsSection() {
   return (
-    <section className="border-y border-border bg-surface py-20 wow-rise">
-      <div className="mx-auto w-full max-w-6xl px-5 md:px-8">
+    <section className="border-y border-border bg-gradient-to-b from-white to-slate-50/55 py-16 sm:py-20 wow-rise">
+      <div className="mx-auto w-full max-w-6xl px-4 sm:px-5 md:px-8">
         <div className="grid gap-10 lg:grid-cols-[1fr_1fr] lg:items-start">
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-widest text-brand">Output quality</p>
-            <h2 className="mt-3 font-display text-4xl font-extrabold tracking-[-0.03em] text-ink">
+            <h2 className="mt-3 font-display text-3xl font-extrabold tracking-[-0.03em] text-ink sm:text-4xl">
               Not a summary.
               <br />
               A full preparation kit.
@@ -302,10 +323,10 @@ function OutputsSection() {
 
 function FirstImpressionSection() {
   return (
-    <section className="mx-auto w-full max-w-6xl px-5 py-20 md:px-8 wow-rise">
+    <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-5 sm:py-20 md:px-8 wow-rise">
       <div className="mb-10 text-center">
         <p className="text-[11px] font-semibold uppercase tracking-widest text-brand">What users notice first</p>
-        <h2 className="mt-3 font-display text-4xl font-extrabold tracking-[-0.03em] text-ink md:text-5xl">
+        <h2 className="mt-3 font-display text-3xl font-extrabold tracking-[-0.03em] text-ink sm:text-4xl md:text-5xl">
           Eye-catching, but purposeful.
         </h2>
         <p className="mx-auto mt-4 max-w-2xl text-base text-muted">
@@ -341,8 +362,8 @@ function FirstImpressionSection() {
 
 function VisualBreak() {
   return (
-    <section className="border-y border-border bg-surface-low py-14 wow-rise">
-      <div className="mx-auto w-full max-w-6xl px-5 md:px-8">
+    <section className="border-y border-border bg-white py-14 wow-rise">
+      <div className="mx-auto w-full max-w-6xl px-4 sm:px-5 md:px-8">
         <div className="grid items-center gap-8 md:grid-cols-[1fr_auto_1fr]">
           <div className="rounded-2xl border border-border bg-white p-5">
             <p className="text-xs font-semibold uppercase tracking-wider text-subtle">Before</p>
@@ -363,10 +384,10 @@ function VisualBreak() {
 
 function WhoItsFor() {
   return (
-    <section className="mx-auto w-full max-w-6xl px-5 py-20 md:px-8 wow-rise">
+    <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-5 sm:py-20 md:px-8 wow-rise">
       <div className="mb-10 text-center">
         <p className="text-[11px] font-semibold uppercase tracking-widest text-brand">Who it serves</p>
-        <h2 className="mt-3 font-display text-4xl font-extrabold tracking-[-0.03em] text-ink md:text-5xl">
+        <h2 className="mt-3 font-display text-3xl font-extrabold tracking-[-0.03em] text-ink sm:text-4xl md:text-5xl">
           Different users.
           <br />
           One calm workflow.
@@ -396,11 +417,11 @@ function PricingPreview() {
   }));
 
   return (
-    <section id="pricing" className="border-y border-border bg-surface py-20 wow-rise">
-      <div className="mx-auto w-full max-w-6xl px-5 md:px-8">
+    <section id="pricing" className="border-y border-border bg-gradient-to-b from-white to-slate-50/55 py-16 sm:py-20 wow-rise">
+      <div className="mx-auto w-full max-w-6xl px-4 sm:px-5 md:px-8">
         <div className="mb-10 text-center">
           <p className="text-[11px] font-semibold uppercase tracking-widest text-brand">Pricing</p>
-          <h2 className="mt-3 font-display text-4xl font-extrabold tracking-[-0.03em] text-ink md:text-5xl">
+          <h2 className="mt-3 font-display text-3xl font-extrabold tracking-[-0.03em] text-ink sm:text-4xl md:text-5xl">
             Start free. Scale as you grow.
           </h2>
         </div>
@@ -410,8 +431,8 @@ function PricingPreview() {
               key={plan.name}
               className={`rounded-2xl border p-5 ${
                 plan.highlight
-                  ? "border-brand bg-brand text-white shadow-xl shadow-brand/30"
-                  : "border-border bg-surface-container text-ink"
+                  ? "border-blue-500 bg-gradient-to-br from-blue-600 to-blue-500 text-white shadow-xl shadow-blue-500/30"
+                  : "border-border bg-white text-ink"
               } wow-rise-delay-3`}
             >
               <p className={`text-[11px] font-semibold uppercase tracking-wider ${plan.highlight ? "text-blue-100" : "text-subtle"}`}>
@@ -438,25 +459,28 @@ function PricingPreview() {
 
 function FinalCta() {
   return (
-    <section className="mx-auto w-full max-w-6xl px-5 py-20 md:px-8 wow-rise">
-      <div className="relative overflow-hidden rounded-3xl border border-border bg-surface-low px-8 py-14 text-center md:px-14">
+    <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-5 sm:py-20 md:px-8 wow-rise">
+      <div className="relative overflow-hidden rounded-3xl border border-blue-200 bg-gradient-to-br from-blue-50 via-white to-indigo-50 px-5 py-10 text-center sm:px-8 sm:py-14 md:px-14">
         <div className="hero-aurora pointer-events-none absolute -left-12 top-0 h-56 w-56 rounded-full bg-brand/30 blur-3xl" />
         <div className="hero-aurora pointer-events-none absolute -bottom-10 right-0 h-56 w-56 rounded-full bg-brand/20 blur-3xl" />
         <div className="relative">
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-brand">Ready to begin</p>
-          <h2 className="mt-3 font-display text-4xl font-extrabold tracking-[-0.03em] text-ink md:text-5xl">
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-blue-700">Ready to begin</p>
+          <h2 className="mt-3 font-display text-3xl font-extrabold tracking-[-0.03em] text-ink sm:text-4xl md:text-5xl">
             Break the panic loop.
             <br />
             Prepare smarter with Arxio.
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-subtle">
+          <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-slate-600">
             Your paper should not take your entire night. Let the workflow run for you, so your energy goes into understanding and presenting.
           </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <Link href="/pricing" className="rounded-xl bg-brand px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-dark">
+          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+            <Link href={APP_SIGNUP_URL} className="rounded-xl bg-brand px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-dark">
               Start free now
             </Link>
-            <Link href="/vision" className="rounded-xl border border-border px-6 py-3 text-sm font-semibold text-ink transition hover:bg-surface-container">
+            <Link href="/pricing" className="rounded-xl border border-border bg-white px-6 py-3 text-sm font-semibold text-ink transition hover:bg-surface-container">
+              Compare plans
+            </Link>
+            <Link href="/vision" className="rounded-xl border border-border bg-white px-6 py-3 text-sm font-semibold text-ink transition hover:bg-surface-container">
               Read the vision
             </Link>
           </div>
@@ -487,20 +511,20 @@ function Footer() {
 export default function Page() {
   return (
     <main>
-      <header className="fixed inset-x-0 top-0 z-40 border-b border-border/70 bg-surface-low/90 backdrop-blur">
+      <header className="fixed inset-x-0 top-0 z-40 border-b border-border/80 bg-white/92 backdrop-blur">
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-5 md:px-8">
           <LogoWordmark size={28} tone="dark" />
           <div className="flex items-center gap-2">
-            <Link href="/pricing" className="rounded-lg px-4 py-2 text-sm font-medium text-muted transition hover:bg-surface hover:text-ink">
+            <Link href="/pricing" className="hidden rounded-lg px-4 py-2 text-sm font-medium text-muted transition hover:bg-surface hover:text-ink sm:inline-flex">
               Pricing
             </Link>
-            <Link href="/vision" className="rounded-lg px-4 py-2 text-sm font-medium text-muted transition hover:bg-surface hover:text-ink">
+            <Link href="/vision" className="hidden rounded-lg px-4 py-2 text-sm font-medium text-muted transition hover:bg-surface hover:text-ink md:inline-flex">
               Vision
             </Link>
-            <Link href={APP_SIGNIN_URL} className="rounded-lg px-4 py-2 text-sm font-medium text-muted transition hover:bg-surface hover:text-ink">
+            <Link href={APP_SIGNIN_URL} className="rounded-lg px-3 py-2 text-xs font-medium text-muted transition hover:bg-slate-100 hover:text-ink sm:px-4 sm:text-sm">
               Sign in
             </Link>
-            <Link href={APP_SIGNUP_URL} className="cta-magnetic cta-primary rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white">
+            <Link href={APP_SIGNUP_URL} className="cta-magnetic cta-primary rounded-lg bg-brand px-3 py-2 text-xs font-semibold text-white sm:px-4 sm:text-sm">
               Try free
             </Link>
           </div>
