@@ -607,14 +607,15 @@ export const StructuredAnalysisPanel = memo(function StructuredAnalysisPanel({ a
 
   return (
     <div
-      className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_14px_28px_rgba(15,23,42,0.08)]"
+      className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_14px_28px_rgba(15,23,42,0.08)] sm:rounded-3xl"
       onKeyDown={onKeyNav}
       role="region"
       aria-label="Structured paper analysis"
     >
-      <div className="sticky top-0 z-10 border-b border-slate-200 bg-gradient-to-r from-white to-slate-50 px-4 py-3">
-        <div className="mb-3 flex flex-wrap items-center gap-2">
-          <p className="mr-2 text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Study mode</p>
+      <div className="sticky top-0 z-10 border-b border-slate-200 bg-gradient-to-r from-white to-slate-50 px-3 py-3 sm:px-4">
+        <div className="mb-3">
+          <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">Study mode</p>
+          <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
           {MODE_GROUPS.map((item) => (
             <button
               key={item.id}
@@ -625,7 +626,7 @@ export const StructuredAnalysisPanel = memo(function StructuredAnalysisPanel({ a
                   setTab(item.tabIds[0]);
                 }
               }}
-              className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+              className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold transition ${
                 mode === item.id
                   ? "bg-blue-600 text-white"
                   : "bg-slate-100 text-slate-600 hover:bg-slate-200"
@@ -634,16 +635,17 @@ export const StructuredAnalysisPanel = memo(function StructuredAnalysisPanel({ a
               {item.label}
             </button>
           ))}
+          </div>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <label htmlFor="analysis-section-select" className="text-xs text-slate-500">
+        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+          <label htmlFor="analysis-section-select" className="text-[11px] text-slate-500">
             Section
           </label>
           <select
             id="analysis-section-select"
             value={activeTab}
             onChange={(e) => setTab(e.target.value)}
-            className="min-w-[210px] rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 outline-none transition focus:border-blue-400"
+            className="w-full min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 outline-none transition focus:border-blue-400 sm:min-w-[210px] sm:w-auto"
             aria-label="Analysis sections"
           >
             {visibleTabs.map((t) => (
@@ -652,12 +654,12 @@ export const StructuredAnalysisPanel = memo(function StructuredAnalysisPanel({ a
               </option>
             ))}
           </select>
-          <p className="text-xs text-slate-500">
+          <p className="text-[11px] text-slate-500 sm:text-xs">
             {visibleTabs.findIndex((item) => item.id === activeTab) + 1}/{visibleTabs.length}
           </p>
         </div>
       </div>
-      <div className="max-h-[min(72vh,56rem)] overflow-y-auto p-5 md:p-6" role="tabpanel">
+      <div className="max-h-[min(72vh,56rem)] overflow-y-auto p-3 sm:p-4 md:p-6" role="tabpanel">
         <ActivePanel tabId={activeTab} analysis={safeAnalysis} omitPaperHeader={omitPaperHeader} />
       </div>
     </div>

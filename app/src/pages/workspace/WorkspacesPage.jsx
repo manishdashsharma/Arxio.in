@@ -50,7 +50,7 @@ export function WorkspacesPage() {
   }, []);
 
   return (
-    <section className="flex h-full min-h-0 flex-col overflow-y-auto rounded-xl border border-arxio-outline-variant/20 bg-white p-4 shadow-sm">
+    <section className="flex h-full min-h-0 flex-col overflow-y-auto rounded-xl border border-arxio-outline-variant/20 bg-white p-3 shadow-sm sm:p-4">
           <header className="flex flex-wrap items-end justify-between gap-3 border-b border-arxio-outline-variant/20 pb-3">
             <div>
               <p className="text-[10px] uppercase tracking-[0.14em] text-arxio-on-surface-variant/70">{WORKSPACES_COPY.CATALOG_KICKER}</p>
@@ -61,12 +61,12 @@ export function WorkspacesPage() {
             </p>
           </header>
 
-          <div className="relative mt-4 overflow-hidden rounded-2xl border border-arxio-outline-variant/20 bg-gradient-to-r from-blue-50 via-indigo-50 to-cyan-50 px-5 py-5">
+          <div className="relative mt-4 overflow-hidden rounded-2xl border border-arxio-outline-variant/20 bg-gradient-to-r from-blue-50 via-indigo-50 to-cyan-50 px-4 py-4 sm:px-5 sm:py-5">
             <span className="pointer-events-none absolute -right-10 -top-12 h-36 w-36 rounded-full bg-blue-500/20 blur-3xl" />
             <span className="pointer-events-none absolute -bottom-12 left-8 h-28 w-28 rounded-full bg-cyan-400/20 blur-3xl" />
             <div className="relative">
               <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-blue-700">{WORKSPACES_COPY.HERO_KICKER}</p>
-              <h2 className="mt-1 text-xl font-bold tracking-tight text-slate-900">{WORKSPACES_COPY.HERO_TITLE}</h2>
+              <h2 className="mt-1 text-lg font-bold tracking-tight text-slate-900 sm:text-xl">{WORKSPACES_COPY.HERO_TITLE}</h2>
               <p className="mt-1 text-sm text-slate-600">{WORKSPACES_COPY.HERO_SUBTITLE}</p>
               <div className="mt-4 flex flex-wrap gap-2">
                 <span className="rounded-full border border-blue-200 bg-white px-3 py-1 text-xs font-semibold text-blue-700">
@@ -109,7 +109,7 @@ export function WorkspacesPage() {
                     <p className="truncate text-lg font-semibold text-arxio-on-surface group-hover:text-blue-700">{item.originalName}</p>
                     <StatusTag status={item.status} className="rounded-sm px-2 py-0.5 tracking-[0.12em]" />
                   </div>
-                  <div className="mt-3 grid grid-cols-3 gap-3 text-xs">
+                  <div className="mt-3 grid grid-cols-2 gap-3 text-xs sm:grid-cols-3">
                     <div>
                       <p className="text-[9px] uppercase tracking-[0.1em] text-arxio-on-surface-variant/65">Pages</p>
                       <p className="text-sm font-semibold text-arxio-on-surface">{item.pageCount ?? "N/A"}</p>

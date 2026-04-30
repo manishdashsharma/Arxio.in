@@ -64,9 +64,17 @@ function rowClasses(active, collapsed) {
   }`;
 }
 
-export function CyberSidebar({ user, onSignOut, activeItem = "dashboard", workspaceLink = "", collapsed = false, onToggleCollapse }) {
+export function CyberSidebar({
+  user,
+  onSignOut,
+  activeItem = "dashboard",
+  workspaceLink = "",
+  collapsed = false,
+  onToggleCollapse,
+  mobileMode = false,
+}) {
   return (
-    <aside className="flex h-full min-h-0 flex-col rounded-2xl border border-slate-200/80 bg-white px-3 py-4 shadow-[0_16px_34px_rgba(15,23,42,0.08)]">
+    <aside className={`flex h-full min-h-0 flex-col border border-slate-200/80 bg-white px-3 py-4 shadow-[0_16px_34px_rgba(15,23,42,0.08)] ${mobileMode ? "rounded-r-2xl rounded-l-none" : "rounded-2xl"}`}>
       <div className="mb-5">
         <div className={`rounded-2xl border border-slate-200/80 bg-gradient-to-br from-white via-blue-50/35 to-indigo-50/45 p-3 ${collapsed ? "px-2.5" : "px-3.5"}`}>
           <div className={`flex items-center ${collapsed ? "justify-center" : "justify-between"} gap-2`}>
@@ -79,17 +87,25 @@ export function CyberSidebar({ user, onSignOut, activeItem = "dashboard", worksp
             <span className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-blue-200 bg-blue-50 text-sm ${collapsed ? "" : "mr-auto ml-0.5"}`}>
               ✦
             </span>
-            <button
-              type="button"
-              onClick={onToggleCollapse}
-              className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 transition hover:border-blue-300 hover:text-blue-600"
-              aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-              title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-            >
-              <svg viewBox="0 0 16 16" className={`h-3.5 w-3.5 transition-transform ${collapsed ? "rotate-180" : ""}`} aria-hidden="true">
-                <path d="M10.5 3.5 6 8l4.5 4.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
+            {onToggleCollapse ? (
+              <button
+                type="button"
+                onClick={onToggleCollapse}
+                className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 transition hover:border-blue-300 hover:text-blue-600"
+                aria-label={mobileMode ? "Close sidebar" : (collapsed ? "Expand sidebar" : "Collapse sidebar")}
+                title={mobileMode ? "Close sidebar" : (collapsed ? "Expand sidebar" : "Collapse sidebar")}
+              >
+                {mobileMode ? (
+                  <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" aria-hidden="true">
+                    <path d="M4 4l8 8M12 4 4 12" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+                  </svg>
+                ) : (
+                  <svg viewBox="0 0 16 16" className={`h-3.5 w-3.5 transition-transform ${collapsed ? "rotate-180" : ""}`} aria-hidden="true">
+                    <path d="M10.5 3.5 6 8l4.5 4.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                )}
+              </button>
+            ) : null}
           </div>
           {!collapsed ? (
             <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">

@@ -105,7 +105,7 @@ export function WorkspaceChatPanel({ workspaceId, workspaceReady, chatAllowed, o
 
   return (
     <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_14px_30px_rgba(15,23,42,0.08)]">
-      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-slate-50/70 px-4 py-3 md:px-5">
+      <header className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 bg-slate-50/70 px-3 py-3 sm:gap-3 sm:px-4 md:px-5">
         <div>
           <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-arxio-primary-container">Study Chat</p>
           <p className="text-xs text-slate-600">Ask follow-ups, practice viva, or request speaking scripts.</p>
@@ -121,15 +121,15 @@ export function WorkspaceChatPanel({ workspaceId, workspaceReady, chatAllowed, o
         )}
       </header>
 
-      <div className="border-b border-slate-200 px-4 py-2 md:px-5">
-        <div className="flex flex-wrap gap-1.5">
+      <div className="border-b border-slate-200 px-3 py-2 sm:px-4 md:px-5">
+        <div className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1">
           {QUICK_PROMPTS.map((prompt) => (
             <button
               key={prompt}
               type="button"
               onClick={() => applyPrompt(prompt)}
               disabled={!workspaceReady || !chatAllowed || sending}
-              className="rounded-md border border-slate-300 bg-white px-2 py-1 text-[10px] font-semibold text-slate-600 transition hover:border-arxio-primary-container/45 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-40"
+              className="shrink-0 rounded-md border border-slate-300 bg-white px-2 py-1 text-[10px] font-semibold text-slate-600 transition hover:border-arxio-primary-container/45 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-40"
             >
               {prompt}
             </button>
@@ -137,7 +137,7 @@ export function WorkspaceChatPanel({ workspaceId, workspaceReady, chatAllowed, o
         </div>
       </div>
 
-      <div ref={listRef} className="max-h-96 space-y-3 overflow-y-auto bg-white px-4 py-4 md:px-5">
+      <div ref={listRef} className="max-h-[24rem] space-y-3 overflow-y-auto bg-white px-3 py-4 sm:px-4 md:px-5">
         {loading ? (
           <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-500">
             Loading conversation...
@@ -158,12 +158,12 @@ export function WorkspaceChatPanel({ workspaceId, workspaceReady, chatAllowed, o
               className={`flex gap-2 ${isUser ? "justify-end" : "justify-start"}`}
             >
               {!isUser ? (
-                <span className="mt-1 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-blue-200 bg-blue-50 text-[10px] font-black text-blue-700">
+                <span className="mt-1 hidden h-6 w-6 shrink-0 items-center justify-center rounded-full border border-blue-200 bg-blue-50 text-[10px] font-black text-blue-700 sm:inline-flex">
                   AI
                 </span>
               ) : null}
               <div
-                className={`max-w-[85%] rounded-2xl border px-3 py-2 ${
+                className={`max-w-[92%] rounded-2xl border px-3 py-2 sm:max-w-[85%] ${
                   isUser
                     ? "border-blue-200 bg-blue-50 text-slate-900"
                     : "border-slate-200 bg-slate-50 text-slate-700"
@@ -173,7 +173,7 @@ export function WorkspaceChatPanel({ workspaceId, workspaceReady, chatAllowed, o
                 <p className="mt-1 text-right text-[10px] opacity-55">{formatTime(m.createdAt)}</p>
               </div>
               {isUser ? (
-                <span className="mt-1 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-[10px] font-black text-slate-500">
+                <span className="mt-1 hidden h-6 w-6 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-[10px] font-black text-slate-500 sm:inline-flex">
                   You
                 </span>
               ) : null}
@@ -197,7 +197,7 @@ export function WorkspaceChatPanel({ workspaceId, workspaceReady, chatAllowed, o
         ) : null}
       </div>
 
-      <form className="border-t border-slate-200 bg-slate-50/70 px-4 py-3 md:px-5" onSubmit={onSubmit}>
+      <form className="border-t border-slate-200 bg-slate-50/70 px-3 py-3 sm:px-4 md:px-5" onSubmit={onSubmit}>
         <textarea
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
@@ -212,7 +212,7 @@ export function WorkspaceChatPanel({ workspaceId, workspaceReady, chatAllowed, o
           <button
             type="submit"
             disabled={!canSend}
-            className="rounded-md bg-gradient-to-br from-arxio-primary-container to-arxio-inverse-primary px-3 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-md bg-gradient-to-br from-arxio-primary-container to-arxio-inverse-primary px-3 py-2 text-[10px] font-semibold uppercase tracking-widest text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {sending ? "Sending..." : "Send"}
           </button>

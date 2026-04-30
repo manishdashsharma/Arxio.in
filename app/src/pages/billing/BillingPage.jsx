@@ -82,10 +82,10 @@ export function BillingPage() {
 
   return (
     <>
-      <section className="flex h-full min-h-0 flex-col overflow-y-auto rounded-xl border border-arxio-outline-variant/10 bg-arxio-bg px-5 pb-12 pt-8 md:px-10">
-          <header className="mb-8 flex flex-wrap items-start justify-between gap-4">
+      <section className="flex h-full min-h-0 flex-col overflow-y-auto rounded-xl border border-arxio-outline-variant/10 bg-arxio-bg px-3 pb-10 pt-4 sm:px-5 sm:pb-12 sm:pt-8 md:px-10">
+          <header className="mb-6 flex flex-wrap items-start justify-between gap-3 sm:mb-8 sm:gap-4">
             <div>
-              <h1 className="text-3xl font-bold tracking-tight text-arxio-on-surface">Plans &amp; allocation</h1>
+              <h1 className="text-2xl font-bold tracking-tight text-arxio-on-surface sm:text-3xl">Plans &amp; allocation</h1>
               <p className="mt-2 max-w-2xl text-sm font-medium text-arxio-on-surface-variant">
                 Compare tiers from your workspace catalog. Self-serve card checkout is not wired yet; your backend can
                 still apply a tier using{" "}
@@ -95,7 +95,7 @@ export function BillingPage() {
             </div>
             <Link
               to="/profile"
-              className="rounded-sm border border-arxio-outline-variant/30 bg-arxio-surface-container/40 px-4 py-2 text-xs font-bold uppercase tracking-widest text-arxio-on-surface transition hover:bg-arxio-surface-container-high"
+              className="rounded-lg border border-arxio-outline-variant/30 bg-arxio-surface-container/40 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.14em] text-arxio-on-surface transition hover:bg-arxio-surface-container-high sm:px-4 sm:text-xs"
             >
               Back to profile
             </Link>
@@ -108,19 +108,19 @@ export function BillingPage() {
           </p>
 
           {activateMessage ? (
-            <p className="mb-4 rounded border border-emerald-500/30 bg-emerald-950/25 px-4 py-2 text-sm text-emerald-100" role="status">
+            <p className="mb-4 rounded border border-emerald-300 bg-emerald-50 px-4 py-2 text-sm text-emerald-700" role="status">
               {activateMessage}
             </p>
           ) : null}
 
           {loadError ? (
-            <p className="mb-4 rounded border border-red-400/30 bg-red-950/25 px-4 py-2 text-sm text-red-200">{loadError}</p>
+            <p className="mb-4 rounded border border-red-300 bg-red-50 px-4 py-2 text-sm text-red-700">{loadError}</p>
           ) : null}
 
           {loading ? (
             <Loader label="Loading plans..." />
           ) : (
-            <div className="mx-auto grid w-full max-w-6xl gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <div className="mx-auto grid w-full max-w-6xl gap-3 sm:grid-cols-2 xl:grid-cols-4">
               {plans.map((p) => {
                 const rank = tierRank(p.tier);
                 const isCurrent = p.tier === plan.tier;
@@ -129,17 +129,17 @@ export function BillingPage() {
                 return (
                   <article
                     key={p.tier}
-                    className={`arxio-glass flex flex-col rounded-lg border p-5 ${
+                    className={`arxio-glass flex flex-col rounded-xl border p-4 sm:p-5 ${
                       p.highlight ? "border-arxio-primary-container/50 ring-1 ring-arxio-primary-container/20" : "border-arxio-outline-variant/15"
                     } ${isCurrent ? "border-arxio-tertiary/40" : ""}`}
                   >
                     {p.highlight ? (
-                      <span className="mb-2 inline-flex w-fit rounded-sm bg-arxio-primary-container/20 px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-arxio-primary-container">
+                      <span className="mb-2 inline-flex w-fit rounded-md bg-arxio-primary-container/20 px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-arxio-primary-container">
                         Popular
                       </span>
                     ) : null}
                     {isCurrent ? (
-                      <span className="mb-2 inline-flex w-fit rounded-sm bg-arxio-tertiary/15 px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-arxio-tertiary">
+                      <span className="mb-2 inline-flex w-fit rounded-md bg-arxio-tertiary/15 px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-arxio-tertiary">
                         Current
                       </span>
                     ) : null}
@@ -158,19 +158,19 @@ export function BillingPage() {
                     </ul>
                     <div className="mt-5">
                       {isCurrent ? (
-                        <p className="w-full rounded-sm border border-arxio-tertiary/30 bg-arxio-tertiary/10 px-3 py-2 text-center text-xs font-bold uppercase tracking-widest text-arxio-tertiary">
+                        <p className="w-full rounded-lg border border-arxio-tertiary/30 bg-arxio-tertiary/10 px-3 py-2 text-center text-xs font-bold uppercase tracking-widest text-arxio-tertiary">
                           Your plan
                         </p>
                       ) : isUpgrade ? (
                         <Button
                           type="button"
                           onClick={() => openActivate(p.tier)}
-                          className="w-full rounded-sm bg-gradient-to-br from-arxio-primary-container to-arxio-inverse-primary py-2 text-xs font-black uppercase tracking-widest text-white"
+                          className="w-full rounded-lg bg-gradient-to-br from-arxio-primary-container to-arxio-inverse-primary py-2 text-xs font-black uppercase tracking-widest text-white"
                         >
                           Upgrade
                         </Button>
                       ) : (
-                        <p className="w-full rounded-sm border border-arxio-outline-variant/25 bg-arxio-surface-container/30 px-3 py-2 text-center text-xs font-bold uppercase tracking-widest text-arxio-on-surface-variant/70">
+                        <p className="w-full rounded-lg border border-arxio-outline-variant/25 bg-arxio-surface-container/30 px-3 py-2 text-center text-xs font-bold uppercase tracking-widest text-arxio-on-surface-variant/70">
                           Lower tier via support
                         </p>
                       )}
@@ -185,7 +185,7 @@ export function BillingPage() {
           )}
 
           {import.meta.env.DEV ? (
-            <p className="mx-auto mt-8 max-w-6xl text-[10px] text-amber-200/80">
+            <p className="mx-auto mt-8 max-w-6xl rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-[10px] text-amber-700">
               Dev hint: use <strong>Upgrade</strong> on a higher tier and confirm with your server{" "}
               <code className="text-arxio-primary">SUBSCRIPTION_ACCESS_KEY</code> to call activate locally.
             </p>
@@ -194,7 +194,7 @@ export function BillingPage() {
 
       {activateOpen ? (
         <div
-          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/55 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-[60] flex items-end justify-center bg-black/55 p-0 sm:items-center sm:p-4 backdrop-blur-sm"
           role="dialog"
           aria-modal="true"
           aria-labelledby="activate-title"
@@ -203,7 +203,7 @@ export function BillingPage() {
           }}
         >
           <div
-            className="arxio-glass w-full max-w-md rounded-xl border border-arxio-outline-variant/20 p-6 shadow-xl"
+            className="arxio-glass w-full max-w-md rounded-t-2xl border border-arxio-outline-variant/20 p-4 shadow-xl sm:rounded-2xl sm:p-6"
             onClick={(e) => e.stopPropagation()}
           >
             <h2 id="activate-title" className="text-lg font-bold text-arxio-on-surface">
@@ -222,16 +222,16 @@ export function BillingPage() {
                   placeholder="Access key"
                   className="w-full rounded-sm border border-arxio-outline-variant/30 bg-arxio-surface-lowest px-3 py-2 text-sm text-arxio-on-surface"
                 />
-                {activateError ? <p className="text-xs text-red-300">{activateError}</p> : null}
-                <div className="flex justify-end gap-2 pt-2">
+                {activateError ? <p className="text-xs text-red-600">{activateError}</p> : null}
+                <div className="flex flex-col justify-end gap-2 pt-2 sm:flex-row">
                   <button
                     type="button"
-                    className="rounded-sm border border-arxio-outline-variant/30 px-4 py-2 text-xs font-bold uppercase text-arxio-on-surface"
+                    className="rounded-lg border border-arxio-outline-variant/30 px-4 py-2 text-xs font-bold uppercase text-arxio-on-surface"
                     onClick={() => setActivateOpen(false)}
                   >
                     Cancel
                   </button>
-                  <Button type="submit" loading={activateLoading} className="rounded-sm px-4 py-2 text-xs font-bold uppercase">
+                  <Button type="submit" loading={activateLoading} className="rounded-lg px-4 py-2 text-xs font-bold uppercase">
                     Confirm upgrade
                   </Button>
                 </div>

@@ -104,14 +104,14 @@ export function WorkspacePage() {
 
   return (
     <section className="flex h-full min-h-0 flex-col overflow-hidden rounded-xl border border-arxio-outline-variant/10 bg-arxio-bg">
-          <header className="flex flex-wrap items-center justify-between gap-3 border-b border-arxio-surface-container/20 bg-white/85 px-4 py-3 backdrop-blur">
+          <header className="flex flex-wrap items-center justify-between gap-3 border-b border-arxio-surface-container/20 bg-white/85 px-3 py-3 backdrop-blur sm:px-4">
             <div className="min-w-0">
               <p className="text-xs font-medium text-arxio-on-surface-variant/70">{WORKSPACE_PAGE_COPY.HEADER_LABEL}</p>
               <h1 className="truncate text-lg font-bold tracking-tight text-arxio-on-surface md:text-xl">
                 {workspace?.originalName || `ID: ${workspaceId}`}
               </h1>
             </div>
-            <div className="flex shrink-0 items-center gap-2">
+            <div className="flex w-full shrink-0 items-center justify-between gap-2 sm:w-auto sm:justify-start">
               <Link
                 to="/dashboard"
                 className="rounded-lg border border-arxio-outline-variant/30 px-3 py-1.5 text-[11px] font-semibold text-arxio-on-surface-variant transition hover:border-arxio-primary-container/40 hover:text-arxio-on-surface"
@@ -122,7 +122,7 @@ export function WorkspacePage() {
             </div>
           </header>
 
-          <div className="flex flex-1 flex-col overflow-y-auto px-4 pb-8 pt-4">
+          <div className="flex flex-1 flex-col overflow-y-auto px-3 pb-7 pt-3 sm:px-4 sm:pb-8 sm:pt-4">
             <PlanStatusStrip className="mb-4" />
 
             {statusLoading ? (
