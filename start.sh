@@ -123,9 +123,9 @@ start_app() {
     warn "node_modules not found — running npm install..."
     npm install
   fi
-  npm run dev &
+  npm run dev -- --host 0.0.0.0 &
   APP_PID=$!
-  ok "Vite running (pid $APP_PID) → http://localhost:5173"
+  ok "Vite running (pid $APP_PID) → http://localhost:5173 (and http://127.0.0.1:5173)"
 
   wait $APP_PID
 }
