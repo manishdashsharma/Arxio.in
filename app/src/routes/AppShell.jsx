@@ -77,7 +77,7 @@ export function AppShell() {
         </span>
       </div>
 
-      <div className={`grid h-[calc(100vh-66px)] w-full gap-3 rounded-2xl border border-arxio-outline-variant/15 bg-arxio-surface-low p-2 md:h-[calc(100vh-16px)] md:p-3 transition-[grid-template-columns] duration-200 ${sidebarCollapsed ? "md:grid-cols-[88px_minmax(0,1fr)]" : "md:grid-cols-[250px_minmax(0,1fr)]"}`}>
+      <div className={`grid h-[calc(100vh-66px)] grid-rows-[1fr] w-full gap-3 rounded-2xl border border-arxio-outline-variant/15 bg-arxio-surface-low p-2 md:h-[calc(100vh-16px)] md:p-3 transition-[grid-template-columns] duration-200 ${sidebarCollapsed ? "md:grid-cols-[88px_minmax(0,1fr)]" : "md:grid-cols-[250px_minmax(0,1fr)]"}`}>
         <div className="hidden h-full min-w-0 shrink-0 md:block">
           <CyberSidebar
             user={user}
@@ -88,7 +88,7 @@ export function AppShell() {
             onToggleCollapse={() => setSidebarCollapsed((prev) => !prev)}
           />
         </div>
-        <div className="min-h-0 min-w-0 overflow-hidden">
+        <div className="min-h-0 min-w-0 h-full overflow-hidden">
           <Outlet />
         </div>
       </div>

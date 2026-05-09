@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { login as loginApi, logout as logoutApi, me, signup as signupApi } from "../api/auth-api";
+import { login as loginApi, logout as logoutApi, me, signup as signupApi, verifyEmail as verifyEmailApi } from "../api/auth-api";
 import { clearTokens, getAccessToken, getRefreshToken, setTokens } from "./storage";
 import { AuthContext } from "./auth-context-store";
 
@@ -38,6 +38,11 @@ export function AuthProvider({ children }) {
 
   async function signUp(name, email, password) {
     const data = await signupApi({ name, email, password });
+    return data;
+  }
+
+  async function verifyEmail(email, otp) {
+    const data = await verifyEmailApi({ email, otp });
     setTokens(data.access_token, data.refresh_token);
     setUser(data.user);
   }
@@ -68,7 +73,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   const value = useMemo(
-    () => ({ ready, user, signIn, signUp, signOut, refreshUser }),
+    () => ({ ready, user, signIn, signUp, verifyEmail, signOut, refreshUser }),
     [ready, user, refreshUser],
   );
 

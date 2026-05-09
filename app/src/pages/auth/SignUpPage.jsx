@@ -1,18 +1,8 @@
 import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button, Input } from "../../common/components";
 import { AuthSidePanel } from "../../features/auth/components/AuthSidePanel";
 import { useAuth } from "../../core/auth/use-auth";
-
-const AUTH_FLASH_KEY = "arxio-auth-flash";
-
-function saveAuthFlash(payload) {
-  try {
-    sessionStorage.setItem(AUTH_FLASH_KEY, JSON.stringify(payload));
-  } catch {
-    // no-op when storage is unavailable
-  }
-}
 
 function formatAuthError(message) {
   const normalized = (message || "").toLowerCase();
@@ -36,6 +26,7 @@ function formatAuthError(message) {
 
 export function SignUpPage() {
   const { signUp } = useAuth();
+  const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -88,12 +79,7 @@ export function SignUpPage() {
     setSubmitting(true);
     try {
       await signUp(form.name.trim(), form.email.trim(), form.password);
-      saveAuthFlash({
-        type: "signup",
-        title: "Account created",
-        detail: "Your workspace is ready. Taking you to your dashboard...",
-        ts: Date.now(),
-      });
+      navigate(`/verify-email?email=${encodeURIComponent(form.email.trim())}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Sign up failed.");
     } finally {

@@ -67,8 +67,26 @@
   }
 }
 
+* {
+  scrollbar-width: none;
+}
+*::-webkit-scrollbar {
+  display: none;
+}
+
 body {
   font-family: var(--font-sans);
   background-color: var(--color-arxio-bg);
   color: var(--color-arxio-on-surface);
 }
+
+@keyframes presIn {
+  from { opacity: 0; transform: translateX(48px) scale(0.97); }
+  to   { opacity: 1; transform: translateX(0)    scale(1);    }
+}
+@keyframes presInBack {
+  from { opacity: 0; transform: translateX(-48px) scale(0.97); }
+  to   { opacity: 1; transform: translateX(0)     scale(1);    }
+}
+.pres-slide-in      { animation: presIn     0.32s cubic-bezier(0.25,0.46,0.45,0.94) both; }
+.pres-slide-in-back { animation: presInBack 0.32s cubic-bezier(0.25,0.46,0.45,0.94) both; }

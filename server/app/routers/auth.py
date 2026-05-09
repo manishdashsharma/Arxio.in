@@ -91,8 +91,8 @@ async def reset_password(request: Request, body: ResetPasswordRequest):
 @router.post("/verify-email")
 async def verify_email(request: Request, body: VerifyEmailRequest):
     try:
-        await verify_email_service(body)
-        return http_response(request, 200, responseMessage.custom("Email verified successfully"), None)
+        result = await verify_email_service(body)
+        return http_response(request, 200, responseMessage.custom("Email verified successfully"), result)
     except Exception as e:
         return http_error(request, e, getattr(e, "status_code", 500))
 

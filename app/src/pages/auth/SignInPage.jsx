@@ -1,18 +1,9 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button, Input } from "../../common/components";
 import { AuthSidePanel } from "../../features/auth/components/AuthSidePanel";
 import { useAuth } from "../../core/auth/use-auth";
-
-const AUTH_FLASH_KEY = "arxio-auth-flash";
-
-function saveAuthFlash(payload) {
-  try {
-    sessionStorage.setItem(AUTH_FLASH_KEY, JSON.stringify(payload));
-  } catch {
-    // no-op when storage is unavailable
-  }
-}
+import { resendVerification } from "../../core/api/auth-api";
 
 function formatAuthError(message) {
   const normalized = (message || "").toLowerCase();
@@ -36,6 +27,7 @@ function formatAuthError(message) {
 
 export function SignInPage() {
   const { signIn } = useAuth();
+  const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
@@ -47,14 +39,14 @@ export function SignInPage() {
     setSubmitting(true);
     try {
       await signIn(email.trim(), password);
-      saveAuthFlash({
-        type: "signin",
-        title: "Welcome back",
-        detail: "You are signed in. Taking you to your dashboard...",
-        ts: Date.now(),
-      });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Sign in failed.");
+      const msg = err instanceof Error ? err.message : "Sign in failed.";
+      if (msg.toLowerCase().includes("verify your email")) {
+        try { await resendVerification({ email: email.trim() }); } catch { /* non-fatal */ }
+        navigate(`/verify-email?email=${encodeURIComponent(email.trim())}`);
+        return;
+      }
+      setError(msg);
     } finally {
       setSubmitting(false);
     }

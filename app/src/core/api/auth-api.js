@@ -18,3 +18,11 @@ export function logout(refreshToken) {
     body: { refresh_token: refreshToken },
   });
 }
+
+export function verifyEmail(payload) {
+  return apiRequest("/auth/verify-email", { method: "POST", body: payload, auth: false });
+}
+
+export function resendVerification(payload) {
+  return apiRequest("/auth/resend-verification", { method: "POST", body: payload, auth: false });
+}

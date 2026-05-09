@@ -1,50 +1,71 @@
 import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
-import { Button, Loader } from "../../common/components";
+import { useNavigate } from "react-router-dom";
+import { Loader } from "../../common/components";
 import { useAuth } from "../../core/auth/use-auth";
 import { me } from "../../core/api/auth-api";
-import { PlanStatusStrip } from "../../core/plan/PlanStatusStrip";
 import { usePlan } from "../../core/plan/use-plan";
 
 function formatDate(iso) {
-  if (!iso) return "N/A";
-  const date = new Date(iso);
-  if (Number.isNaN(date.getTime())) return "N/A";
-  return date.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+  if (!iso) return "—";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "—";
+  return d.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
 }
 
-function nextMonthlyResetLabel() {
+function nextReset() {
   const now = new Date();
   const next = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-  return next.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric", year: "numeric" });
-}
-
-function pdfUsagePercent(used, limit) {
-  if (limit === -1 || limit == null) return 0;
-  const u = Number(used) || 0;
-  const l = Number(limit) || 1;
-  return Math.min(100, Math.round((u / l) * 100));
+  return next.toLocaleDateString(undefined, { month: "short", day: "numeric" });
 }
 
 function initials(name) {
-  if (!name || typeof name !== "string") return "?";
+  if (!name) return "?";
   const parts = name.trim().split(/\s+/).filter(Boolean);
   if (parts.length === 0) return "?";
   if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
+function UsageStat({ label, used, limit, color = "bg-blue-500" }) {
+  const isUnlimited = limit === -1;
+  const pct = isUnlimited ? 100 : Math.min(100, Math.round((used / (limit || 1)) * 100));
+  const warn = !isUnlimited && pct > 85;
+  return (
+    <div>
+      <div className="mb-1.5 flex items-center justify-between">
+        <span className="text-[11px] font-semibold text-slate-600">{label}</span>
+        <span className="text-[11px] font-semibold text-slate-500">
+          {isUnlimited ? `${used} / ∞` : `${used} / ${limit}`}
+        </span>
+      </div>
+      <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+        <div
+          className={`h-full rounded-full transition-all duration-500 ${warn ? "bg-rose-500" : color}`}
+          style={{ width: isUnlimited ? "30%" : `${pct}%` }}
+        />
+      </div>
+    </div>
+  );
+}
+
+const PLAN_COLORS = {
+  free: "from-slate-100 to-slate-200 text-slate-600",
+  student: "from-blue-500 to-indigo-600 text-white",
+  pro: "from-violet-500 to-purple-600 text-white",
+  scholar: "from-amber-400 to-orange-500 text-white",
+};
+
 export function ProfilePage() {
   const { user } = useAuth();
   const plan = usePlan();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [profile, setProfile] = useState(user);
-  const [mfaPreviewOn, setMfaPreviewOn] = useState(false);
 
-  const profileData = useMemo(() => profile || user, [profile, user]);
+  const data = useMemo(() => profile || user, [profile, user]);
 
-  async function refreshProfile() {
+  async function refresh() {
     setLoading(true);
     setError("");
     try {
@@ -52,7 +73,7 @@ export function ProfilePage() {
       setProfile(fresh);
       await plan.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not refresh profile.");
+      setError(err instanceof Error ? err.message : "Could not refresh.");
     } finally {
       setLoading(false);
     }
@@ -60,177 +81,187 @@ export function ProfilePage() {
 
   const pdfUsed = plan.usage?.pdfsUsed ?? 0;
   const pdfLimit = plan.limits?.pdfs_per_month;
-  const pdfPct = plan.loading || !plan.quotasReady ? 0 : pdfUsagePercent(pdfUsed, pdfLimit);
-  const pdfLabel =
-    pdfLimit === -1 ? `${pdfUsed} / Unlimited` : `${pdfUsed} / ${pdfLimit} Used`;
+  const planGradient = PLAN_COLORS[plan.tier] || PLAN_COLORS.free;
 
   return (
-    <section className="flex h-full min-h-0 flex-col overflow-y-auto rounded-xl border border-arxio-outline-variant/10 bg-arxio-bg px-4 pb-10 pt-5 md:px-7">
-      <header className="mb-6 rounded-2xl border border-slate-200/80 bg-gradient-to-r from-white via-blue-50/45 to-indigo-50/40 p-5 shadow-[0_14px_30px_rgba(15,23,42,0.07)] md:p-6">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div className="min-w-0">
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">Student Profile Hub</p>
-            <h1 className="mt-1 text-2xl font-black tracking-tight text-slate-900 md:text-3xl">
-              Welcome back, {profileData?.name || "Learner"}
-            </h1>
-            <p className="mt-2 text-sm text-slate-600">
-              Review your account, monitor plan usage, and manage your security in one clean workspace.
-            </p>
-          </div>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={refreshProfile}
-            loading={loading}
-            className="rounded-xl border-slate-300 bg-white px-4 text-xs font-bold uppercase tracking-[0.12em] text-slate-700 hover:border-blue-300 hover:text-blue-700"
-          >
-            Refresh profile
-          </Button>
+    <section className="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-slate-200/60 bg-slate-50">
+
+      {/* Sticky header */}
+      <header className="shrink-0 border-b border-slate-200/80 bg-white px-5 py-4 flex items-center justify-between gap-3">
+        <div>
+          <h1 className="text-lg font-bold tracking-tight text-slate-900">Account</h1>
+          <p className="text-xs text-slate-400 mt-0.5">Manage your profile and subscription</p>
         </div>
+        <button
+          type="button"
+          onClick={refresh}
+          disabled={loading}
+          className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-500 transition hover:border-blue-300 hover:text-blue-600 disabled:opacity-40"
+        >
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className={loading ? "animate-spin" : ""}>
+            <path d="M10 6A4 4 0 1 1 6 2M10 2v4H6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          Sync
+        </button>
       </header>
 
-      {error ? (
-        <p className="mb-5 rounded-xl border border-rose-200 bg-rose-50 px-4 py-2 text-sm font-medium text-rose-700">{error}</p>
-      ) : null}
-
-      {!profileData ? (
-        <Loader label="Loading profile..." />
-      ) : (
-        <div className="mx-auto w-full max-w-6xl space-y-5">
-          <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_12px_24px_rgba(15,23,42,0.05)] md:p-6">
-            <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
-              <div>
-                <h2 className="text-lg font-bold tracking-tight text-slate-900">Account Details</h2>
-                <p className="text-xs text-slate-500">Your primary identity information.</p>
+      <div className="flex-1 overflow-y-auto">
+        {!data ? (
+          <div className="flex h-full items-center justify-center"><Loader label="Loading..." /></div>
+        ) : (
+          <>
+            {/* Identity card */}
+            <div className="mx-5 mt-5 flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="relative shrink-0">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 border border-blue-100 text-lg font-black text-blue-600">
+                  {initials(data.name)}
+                </div>
+                <span className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full border-2 border-white bg-emerald-400" />
               </div>
-              <span className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-blue-700">
-                Read only
-              </span>
-            </div>
-
-            <div className="grid gap-5 md:grid-cols-[auto_minmax(0,1fr)]">
-              <div className="shrink-0">
-                {profileData.avatar ? (
-                  <img src={profileData.avatar} alt="" className="h-20 w-20 rounded-2xl object-cover ring-2 ring-slate-100 md:h-24 md:w-24" />
-                ) : (
-                  <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-100 to-indigo-100 text-xl font-black text-blue-700 ring-2 ring-slate-100 md:h-24 md:w-24">
-                    {initials(profileData.name)}
-                  </div>
-                )}
-              </div>
-
-              <div className="grid min-w-0 grid-cols-1 gap-4 md:grid-cols-2">
-                <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">Full Name</p>
-                  <p className="mt-1 truncate text-sm font-semibold text-slate-900">{profileData.name || "Not set"}</p>
-                </div>
-                <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">Email Address</p>
-                  <p className="mt-1 truncate text-sm font-semibold text-slate-900">{profileData.email || "Not set"}</p>
-                </div>
-                <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">Member Since</p>
-                  <p className="mt-1 truncate text-sm font-semibold text-slate-900">{formatDate(profileData.created_at)}</p>
-                </div>
-                <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">User ID</p>
-                  <p className="mt-1 truncate text-sm font-semibold text-slate-900">{String(profileData.id || "").slice(-8) || "—"}</p>
+              <div className="min-w-0">
+                <p className="text-base font-bold text-slate-900 truncate">{data.name || "—"}</p>
+                <p className="text-xs text-slate-400 truncate">{data.email || "—"}</p>
+                <p className="mt-0.5 text-[11px] text-slate-400">Member since {formatDate(data.created_at)}</p>
+                <div className="mt-1.5">
+                  {data.is_verified ? (
+                    <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                      Email verified
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] font-semibold text-amber-700">
+                      <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
+                      Not verified
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
-          </section>
 
-          <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_12px_24px_rgba(15,23,42,0.05)] md:p-6">
-            <PlanStatusStrip className="mb-5" upgradeLabel="Upgrade plan" />
+            {error && (
+              <div className="mx-5 mt-3 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-xs text-rose-700">{error}</div>
+            )}
 
-            <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_260px]">
-              <div className="space-y-3">
-                <h2 className="text-lg font-bold tracking-tight text-slate-900">Plan & Usage</h2>
-                <p className="text-sm text-slate-600">
-                  You are currently on the <span className="font-bold text-blue-700">{plan.displayName}</span> plan. Track your monthly PDF usage below.
-                </p>
-                <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-4">
-                  <div className="mb-2 flex items-center justify-between text-xs font-semibold text-slate-600">
-                    <span>PDF usage</span>
-                    <span>{plan.loading || !plan.quotasReady ? "…" : pdfLabel}</span>
-                  </div>
-                  <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200">
-                    <div
-                      className="h-full rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all duration-500"
-                      style={{ width: pdfLimit === -1 ? "100%" : `${pdfPct}%` }}
-                    />
-                  </div>
-                  <p className="mt-2 text-xs text-slate-500">Resets on {nextMonthlyResetLabel()}.</p>
-                  {plan.error ? <p className="mt-2 text-xs font-medium text-amber-700">{plan.error}</p> : null}
-                </div>
-              </div>
+            <div className="px-5 pb-5 pt-3 space-y-4">
 
-              <div className="rounded-xl border border-indigo-200 bg-gradient-to-br from-indigo-50 to-blue-50 p-4">
-                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-indigo-500">Billing preview</p>
-                <p className="mt-2 text-sm font-semibold text-slate-900">Invoices</p>
-                <p className="mt-1 text-xs text-slate-600">
-                  Billing statements and payment history will appear here once enabled.
-                </p>
-                <Link
-                  to="/billing"
-                  className="mt-4 inline-flex rounded-lg border border-indigo-200 bg-white px-3 py-1.5 text-xs font-semibold text-indigo-700 transition hover:border-indigo-300 hover:bg-indigo-50"
-                >
-                  Open billing page
-                </Link>
-              </div>
-            </div>
-          </section>
-
-          <section className="grid gap-5 lg:grid-cols-2">
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_12px_24px_rgba(15,23,42,0.05)] md:p-6">
-              <h2 className="text-lg font-bold tracking-tight text-slate-900">Security</h2>
-              <p className="mt-1 text-xs text-slate-500">Recommended settings to protect your account.</p>
-
-              <div className="mt-4 space-y-3">
-                <div className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-3">
+              {/* Plan card */}
+              <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                <div className={`bg-gradient-to-r ${planGradient} px-5 py-4 flex items-center justify-between gap-3`}>
                   <div>
-                    <p className="text-sm font-semibold text-slate-900">Multi-factor authentication</p>
-                    <p className="text-xs text-slate-500">Add an extra layer of protection while signing in.</p>
+                    <p className="text-[10px] font-bold uppercase tracking-widest opacity-70 mb-0.5">Current plan</p>
+                    <p className="text-xl font-black tracking-tight">{plan.displayName}</p>
                   </div>
                   <button
                     type="button"
-                    role="switch"
-                    aria-checked={mfaPreviewOn}
-                    onClick={() => setMfaPreviewOn((v) => !v)}
-                    className={`relative h-6 w-11 shrink-0 rounded-full p-0.5 transition-colors ${mfaPreviewOn ? "bg-blue-500" : "bg-slate-300"}`}
+                    onClick={() => navigate("/billing")}
+                    className="shrink-0 rounded-xl border border-white/30 bg-white/20 px-4 py-2 text-xs font-bold backdrop-blur-sm transition hover:bg-white/30"
                   >
-                    <span
-                      className={`block h-5 w-5 rounded-full bg-white shadow transition-transform ${mfaPreviewOn ? "translate-x-5" : "translate-x-0"}`}
-                    />
+                    {plan.tier === "free" ? "Upgrade →" : "Manage"}
                   </button>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-3">
-                  <div className="flex items-center justify-between gap-3">
-                    <div>
-                      <p className="text-sm font-semibold text-slate-900">API access keys</p>
-                      <p className="text-xs text-slate-500">Generate keys for integrations and automation.</p>
+                <div className="px-5 py-4 space-y-3">
+                  <div className="flex items-center justify-between text-[11px] text-slate-500">
+                    <span className="font-semibold">Monthly usage</span>
+                    <span>Resets {nextReset()}</span>
+                  </div>
+
+                  <UsageStat
+                    label="PDF uploads"
+                    used={pdfUsed}
+                    limit={pdfLimit}
+                    color="bg-blue-500"
+                  />
+                  <UsageStat
+                    label="Research topics"
+                    used={plan.usage?.researchUsed ?? 0}
+                    limit={plan.limits?.research_per_month}
+                    color="bg-violet-500"
+                  />
+                  <UsageStat
+                    label="Chat messages"
+                    used={plan.usage?.chatUsed ?? 0}
+                    limit={plan.limits?.chat_messages}
+                    color="bg-emerald-500"
+                  />
+
+                  {plan.limits?.history_days !== undefined && (
+                    <div className="mt-1 flex items-center gap-2 rounded-xl border border-slate-100 bg-slate-50 px-3 py-2.5">
+                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="text-slate-400 shrink-0">
+                        <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.3"/>
+                        <path d="M7 4.5V7l2 1.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      <span className="text-[11px] text-slate-500">
+                        History retention:{" "}
+                        <span className="font-bold text-slate-700">
+                          {plan.limits.history_days === -1 ? "Forever" : `${plan.limits.history_days} days`}
+                        </span>
+                      </span>
                     </div>
-                    <span className="rounded-full border border-slate-300 bg-white px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
-                      Coming soon
-                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Security */}
+              <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+                <div className="px-5 py-4 border-b border-slate-100">
+                  <p className="text-sm font-bold text-slate-900">Security</p>
+                </div>
+                <div className="divide-y divide-slate-100">
+                  {[
+                    {
+                      icon: (
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="3" y="7" width="10" height="7" rx="2" stroke="currentColor" strokeWidth="1.3"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>
+                      ),
+                      label: "Password",
+                      sub: "Change your login password",
+                    },
+                    {
+                      icon: (
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2l1.5 3 3.5.5-2.5 2.4.6 3.5L8 10l-3.1 1.4.6-3.5L3 5.5 6.5 5z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/></svg>
+                      ),
+                      label: "Two-factor authentication",
+                      sub: "Protect your account with 2FA",
+                    },
+                  ].map(({ icon, label, sub }) => (
+                    <div key={label} className="flex items-center gap-4 px-5 py-4">
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-100 bg-slate-50 text-slate-400">
+                        {icon}
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-slate-800">{label}</p>
+                        <p className="text-[11px] text-slate-400">{sub}</p>
+                      </div>
+                      <span className="shrink-0 rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-semibold text-slate-400">Soon</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Danger zone */}
+              <div className="rounded-2xl border border-rose-100 bg-white shadow-sm overflow-hidden">
+                <div className="px-5 py-4 border-b border-rose-100">
+                  <p className="text-sm font-bold text-rose-600">Danger zone</p>
+                </div>
+                <div className="flex items-start gap-4 px-5 py-4">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-rose-100 bg-rose-50 text-rose-400">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2a6 6 0 1 0 0 12A6 6 0 0 0 8 2zM8 5v3.5M8 10.5v.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/></svg>
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-slate-800">Delete account</p>
+                    <p className="mt-0.5 text-[11px] text-slate-400 leading-relaxed">
+                      Permanently removes your account and all data. Email{" "}
+                      <a href="mailto:support@arxio.in" className="text-rose-500 hover:underline font-medium">support@arxio.in</a>{" "}
+                      to request deletion.
+                    </p>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div className="rounded-2xl border border-rose-200 bg-rose-50/65 p-5 shadow-[0_12px_24px_rgba(244,63,94,0.08)] md:p-6">
-              <h2 className="text-lg font-bold tracking-tight text-rose-700">Danger Zone</h2>
-              <p className="mt-2 text-sm leading-relaxed text-rose-700/90">
-                Account deletion is permanent. Your uploaded papers, generated analysis, and metadata will be removed and cannot be recovered.
-              </p>
-              <p className="mt-4 text-xs font-semibold uppercase tracking-[0.12em] text-rose-600">
-                Secure verification required before this action is enabled.
-              </p>
             </div>
-          </section>
-        </div>
-      )}
+          </>
+        )}
+      </div>
     </section>
   );
 }

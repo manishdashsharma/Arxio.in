@@ -3,7 +3,7 @@ import { useEffect } from "react";
 function resolveLandingUrl() {
   const configured = (import.meta.env.VITE_LANDING_URL || "").trim();
   if (configured) return configured;
-  if (import.meta.env.DEV) return "http://127.0.0.1:3000";
+  if (import.meta.env.DEV) return "http://localhost:3000";
   return "https://arxio.in";
 }
 

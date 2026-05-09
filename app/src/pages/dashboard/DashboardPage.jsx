@@ -204,6 +204,19 @@ export function DashboardPage() {
     [recent],
   );
 
+  const allowed = plan.pdfUploadAllowed && !uploading && !processing;
+
+  function getGreeting() {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good morning";
+    if (hour < 17) return "Good afternoon";
+    return "Good evening";
+  }
+
+  const pdfUsed = plan.usage?.pdfsUsed ?? 0;
+  const pdfLimit = plan.limits?.pdfs_per_month;
+  const pdfPct = pdfLimit === -1 ? 0 : Math.min(100, Math.round((pdfUsed / (pdfLimit || 1)) * 100));
+
   return (
     <>
       <PdfQuotaLimitModal
@@ -214,287 +227,206 @@ export function DashboardPage() {
         onOpenProfile={() => navigate("/profile")}
         onUpgradePlan={() => navigate("/billing")}
       />
-      {showUploadCelebration ? (
-        <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="arxio-glass relative w-[92%] max-w-md overflow-hidden rounded-xl border border-arxio-outline-variant/20 px-5 py-5 text-center arxio-header-shadow">
-            <span className="absolute left-6 top-6 h-2 w-2 animate-ping rounded-full bg-arxio-primary-container/80" />
-            <span className="absolute right-8 top-8 h-1.5 w-1.5 animate-ping rounded-full bg-arxio-inverse-primary [animation-delay:140ms]" />
-            <span className="absolute bottom-8 left-10 h-1.5 w-1.5 animate-ping rounded-full bg-arxio-primary/60 [animation-delay:220ms]" />
-            <span className="absolute bottom-7 right-9 h-2 w-2 animate-ping rounded-full bg-arxio-primary-container [animation-delay:80ms]" />
-            <div className="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-full border border-arxio-primary-container/40 bg-arxio-primary-container/15 text-2xl text-arxio-on-surface">
-              ✓
-            </div>
-            <p className="mt-3 text-lg font-semibold text-arxio-on-surface">Upload Complete</p>
-            <p className="mt-1 text-sm text-arxio-on-surface-variant">{celebrationMessage}</p>
+
+      {showUploadCelebration && (
+        <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
+          <div className="w-80 rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-2xl">
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-50 border border-emerald-200 text-emerald-500 text-xl">✓</div>
+            <p className="font-bold text-slate-900">Uploaded successfully</p>
+            <p className="mt-1 text-xs text-slate-400 truncate px-4">{celebrationMessage}</p>
           </div>
         </div>
-      ) : null}
-      <section className="relative flex h-full min-h-0 flex-col rounded-xl border border-arxio-outline-variant/10 bg-arxio-bg p-0">
-          <header className="flex flex-wrap items-center justify-between gap-3 border-b border-arxio-surface-container/20 bg-white/85 px-3 py-3 backdrop-blur sm:px-4">
-            <p className="text-sm font-semibold text-arxio-on-surface">
-              {DASHBOARD_COPY.HERO_WELCOME_PREFIX} {user?.name || "Learner"}
-            </p>
-            <div className="w-full min-w-0 sm:w-auto sm:min-w-[18rem]">
+      )}
+
+      <section className="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-slate-200/60 bg-slate-50">
+
+        {/* Header */}
+        <header className="shrink-0 border-b border-slate-200/80 bg-white px-5 py-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h1 className="text-lg font-bold tracking-tight text-slate-900">
+                {getGreeting()}, {user?.name?.split(" ")[0] || "there"}
+              </h1>
+              <p className="mt-0.5 text-xs text-slate-400">
+                {workspaceMeta.total === 0
+                  ? "Upload your first research paper to get started"
+                  : `${workspaceMeta.total} workspace${workspaceMeta.total !== 1 ? "s" : ""} · ${completedCount} completed`}
+              </p>
+            </div>
+            <div className="shrink-0">
               <PlanStatusStrip />
             </div>
-          </header>
-
-          <div className="flex flex-1 flex-col overflow-y-auto px-3 pb-10 pt-4 sm:px-4 sm:pb-12 sm:pt-6">
-          <div className="mb-6 flex flex-wrap items-end justify-between gap-3 rounded-2xl border border-arxio-outline-variant/20 bg-gradient-to-r from-white via-white to-blue-50/40 px-4 py-5 shadow-sm sm:mb-8 sm:px-5 sm:py-6">
-            <div className="min-w-0">
-              <h1 className="text-2xl font-bold leading-tight tracking-tight text-arxio-on-surface sm:text-3xl md:text-4xl">
-                {DASHBOARD_COPY.HERO_TITLE}
-              </h1>
-              <p className="mt-2 text-sm text-arxio-on-surface-variant">
-                {DASHBOARD_COPY.HERO_SUBTITLE}
-              </p>
-            </div>
-            
           </div>
+        </header>
 
-          <div className="relative mb-6 overflow-hidden rounded-2xl border border-arxio-outline-variant/20 bg-gradient-to-r from-blue-50 via-indigo-50 to-cyan-50 px-4 py-4 sm:px-5 sm:py-5">
-            <span className="pointer-events-none absolute -right-10 -top-12 h-36 w-36 rounded-full bg-blue-500/20 blur-3xl" />
-            <span className="pointer-events-none absolute -bottom-12 left-8 h-28 w-28 rounded-full bg-cyan-400/20 blur-3xl" />
-            <div className="relative">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-blue-700">{DASHBOARD_COPY.SNAPSHOT_KICKER}</p>
-              <h2 className="mt-1 text-xl font-bold tracking-tight text-slate-900">{DASHBOARD_COPY.SNAPSHOT_TITLE}</h2>
-              <p className="mt-1 text-sm text-slate-600">{DASHBOARD_COPY.SNAPSHOT_SUBTITLE}</p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                <span className="rounded-full border border-blue-200 bg-white px-3 py-1 text-xs font-semibold text-blue-700">
-                  {workspaceMeta.total} Total
-                </span>
-                <span className="rounded-full border border-emerald-200 bg-white px-3 py-1 text-xs font-semibold text-emerald-700">
-                  {completedCount} Completed
-                </span>
-                <span className="rounded-full border border-amber-200 bg-white px-3 py-1 text-xs font-semibold text-amber-700">
-                  {pendingCount + processingCount} In Progress
-                </span>
+        <div className="flex flex-1 overflow-hidden">
+
+          {/* Main content */}
+          <div className="flex flex-1 flex-col overflow-y-auto px-5 py-5 gap-5">
+
+            {/* Banners */}
+            {authFlash && (
+              <div className="flex items-center justify-between gap-3 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-xs text-blue-800">
+                <span><span className="font-semibold">{authFlash.title}:</span> {authFlash.detail}</span>
+                <button type="button" onClick={() => setAuthFlash(null)} className="text-blue-400 hover:text-blue-700">✕</button>
+              </div>
+            )}
+            {error && (
+              <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs text-red-700">{error}</div>
+            )}
+            {!plan.pdfUploadAllowed && pdfLimitModalDismissed && (
+              <div className="flex items-center justify-between rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-800">
+                <span>{PLAN_NUDGES.pdf_limit} <span className="font-semibold">{plan.formatPdfUsage()}</span></span>
+                <button type="button" onClick={() => navigate("/billing")} className="font-semibold text-amber-700 hover:underline">Upgrade →</button>
+              </div>
+            )}
+
+            {/* Upload card */}
+            <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+              <div className="border-b border-slate-100 px-5 py-3.5 flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-bold text-slate-900">Upload a paper</p>
+                  <p className="text-[11px] text-slate-400 mt-0.5">PDF · Max 50MB · Up to 50 pages</p>
+                </div>
+                {pdfLimit !== -1 && plan.quotasReady && (
+                  <div className="text-right">
+                    <p className="text-[10px] font-semibold text-slate-400 mb-1">{pdfUsed}/{pdfLimit} used</p>
+                    <div className="w-20 h-1 rounded-full bg-slate-100 overflow-hidden">
+                      <div className={`h-full rounded-full ${pdfPct > 85 ? "bg-rose-500" : "bg-blue-500"}`} style={{ width: `${pdfPct}%` }} />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="p-5">
+                {uploading ? (
+                  <div className="flex items-center gap-4 rounded-xl border border-slate-100 bg-slate-50 px-5 py-4">
+                    <div className="h-8 w-8 shrink-0 animate-spin rounded-full border-2 border-slate-200 border-t-blue-500" />
+                    <div>
+                      <p className="text-sm font-semibold text-slate-800">Uploading your paper...</p>
+                      <p className="text-xs text-slate-400">This will only take a moment</p>
+                    </div>
+                  </div>
+                ) : latestWorkspaceId ? (
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-emerald-200 bg-white text-emerald-500">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-bold text-emerald-800">Ready to generate</p>
+                        <p className="text-xs text-emerald-600 truncate max-w-xs">{uploadSuccess || "File uploaded successfully"}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => navigate(`/workspace/${latestWorkspaceId}`)}
+                        className="text-xs font-semibold text-emerald-700 hover:underline"
+                      >
+                        Skip →
+                      </button>
+                      <Button
+                        type="button"
+                        onClick={onStartProcessing}
+                        loading={processing}
+                        disabled={processing}
+                        className="rounded-xl px-5 py-2 text-xs"
+                      >
+                        Generate workspace
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <label className={`group flex cursor-pointer flex-col items-center gap-4 rounded-xl border-2 border-dashed py-10 transition-all ${allowed ? "border-slate-200 hover:border-blue-400 hover:bg-blue-50/40" : "cursor-not-allowed border-slate-100 opacity-40"}`}>
+                    <input type="file" accept="application/pdf" className="hidden" onChange={onUploadChange} disabled={!allowed} />
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 transition-all group-hover:border-blue-200 group-hover:bg-blue-50">
+                      <svg width="22" height="22" viewBox="0 0 22 22" fill="none" className="text-slate-400 group-hover:text-blue-500 transition-colors">
+                        <path d="M11 14V4M7 8l4-4 4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M4 17h14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+                      </svg>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-sm font-semibold text-slate-700 group-hover:text-slate-900">Drop your PDF here or <span className="text-blue-600">browse</span></p>
+                      <p className="mt-1 text-xs text-slate-400">Get a complete presentation, cheat sheet, and Q&amp;A prep in minutes</p>
+                    </div>
+                  </label>
+                )}
+
+                {uploadError && (
+                  <p className="mt-3 rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-xs text-red-700">{uploadError}</p>
+                )}
               </div>
             </div>
-          </div>
 
-          {authFlash ? (
-            <div className="mb-2 rounded border border-arxio-outline-variant/20 bg-arxio-surface-container/40 px-3 py-1.5 text-[11px] text-arxio-on-surface" role="status">
-              <span className="font-semibold">{authFlash.title}:</span> {authFlash.detail}
-              <button type="button" className="ml-2 text-arxio-primary hover:text-arxio-on-surface" onClick={() => setAuthFlash(null)}>Dismiss</button>
-            </div>
-          ) : null}
-          {error ? <p className="mb-2 rounded border border-red-400/30 bg-red-950/30 px-3 py-1.5 text-[11px] text-red-200">{error}</p> : null}
-          {uploadSuccess ? (
-            <div className="mb-2 flex flex-wrap items-center justify-between gap-2 rounded border border-arxio-outline-variant/20 bg-arxio-surface-container/40 px-3 py-1.5 text-[11px] text-arxio-on-surface" role="status">
-              <span>{uploadSuccess}</span>
-              <button type="button" className="text-arxio-primary hover:text-arxio-on-surface" onClick={() => setUploadSuccess("")}>
-                Dismiss
-              </button>
-            </div>
-          ) : null}
-          {plan.error ? (
-            <p className="mb-2 rounded border border-amber-400/25 bg-amber-500/10 px-3 py-1.5 text-[11px] text-amber-100">
-              Plan data could not be refreshed ({plan.error}). Limits shown match your account tier until sync succeeds.
-            </p>
-          ) : null}
-
-          <div id="upload" className="mb-10 space-y-3">
-            {!plan.pdfUploadAllowed && pdfLimitModalDismissed ? (
-              <p className="rounded border border-arxio-outline-variant/20 bg-arxio-surface-container/40 px-3 py-2 text-center text-[11px] text-arxio-on-surface-variant">
-                {PLAN_NUDGES.pdf_limit}{" "}
-                <span className="text-arxio-primary-container">{plan.formatPdfUsage()}</span>
-              </p>
-            ) : null}
-            <label
-              className={`group relative overflow-hidden flex min-h-[14rem] flex-col items-center justify-center rounded-2xl border border-dashed border-arxio-outline-variant/45 bg-white p-5 text-center transition-colors sm:min-h-[16rem] sm:p-8 ${
-                plan.pdfUploadAllowed && !uploading && !processing
-                  ? "cursor-pointer hover:border-arxio-primary-container/50 hover:bg-arxio-surface-low"
-                  : "cursor-not-allowed opacity-50"
-              }`}
-            >
-              <span className="pointer-events-none absolute -right-12 -top-16 h-36 w-36 rounded-full bg-arxio-primary-container/12 blur-3xl" />
-              <input
-                type="file"
-                accept="application/pdf"
-                className="hidden"
-                onChange={onUploadChange}
-                disabled={uploading || processing || !plan.pdfUploadAllowed}
-              />
-              <div className="mx-auto mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-arxio-primary-container/10 text-arxio-primary-container transition-transform group-hover:scale-110">
-                <span className="text-4xl" aria-hidden="true">
-                  ↑
-                </span>
-              </div>
-              <h2 className="text-xl font-bold tracking-tight text-arxio-on-surface sm:text-2xl">Drop your research paper</h2>
-              <p className="mt-2 text-sm text-arxio-on-surface-variant">
-                Upload once and we will create your summary, slides, script, and Q&A prep workspace.
-              </p>
-              <p className="mt-2 block text-[10px] font-semibold uppercase tracking-[0.2em] text-arxio-primary-container">Max file size: 50MB</p>
-              <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
-                <span className="rounded border border-arxio-outline-variant/20 bg-arxio-surface-container-highest px-2 py-1 text-[10px] font-bold text-arxio-on-surface-variant/80">
-                  PDF
-                </span>
-                <span className="rounded border border-arxio-outline-variant/20 bg-arxio-surface-container-highest px-2 py-1 text-[10px] font-bold text-arxio-on-surface-variant/50">
-                  Notes
-                </span>
-                <span className="rounded border border-arxio-outline-variant/20 bg-arxio-surface-container-highest px-2 py-1 text-[10px] font-bold text-arxio-on-surface-variant/50">
-                  Slides
-                </span>
-              </div>
-              <div className="mt-5 flex flex-wrap items-center justify-center gap-2 text-[11px] text-arxio-on-surface-variant/80">
-                <span className="rounded-full bg-arxio-surface-low px-2.5 py-1">1. Upload</span>
-                <span className="rounded-full bg-arxio-surface-low px-2.5 py-1">2. Generate</span>
-                <span className="rounded-full bg-arxio-surface-low px-2.5 py-1">3. Practice</span>
-              </div>
-            </label>
-            <div className="flex flex-col items-center gap-2">
-              <Button
-                type="button"
-                onClick={onStartProcessing}
-                disabled={!latestWorkspaceId || uploading || processing}
-                loading={processing}
-                className="rounded-lg px-5 py-2 text-xs"
-              >
-                Generate Workspace
-              </Button>
-              {(latestWorkspaceId || latestWorkspace?.workspaceId) && !processing ? (
-                <button
-                  type="button"
-                  className="text-xs font-semibold text-arxio-primary transition hover:text-arxio-on-surface"
-                  onClick={() => navigate(`/workspace/${latestWorkspaceId || latestWorkspace?.workspaceId}`)}
-                >
-                  Go to workspace now
-                </button>
-              ) : null}
-              {uploadError ? (
-                <p className="max-w-2xl rounded border border-red-400/30 bg-red-950/25 px-3 py-2 text-center text-xs text-red-200">{uploadError}</p>
-              ) : null}
-              {latestWorkspaceId ? (
-                <p className="max-w-xl text-center text-[10px] leading-relaxed text-arxio-on-surface-variant/85">
-                  <button
-                    type="button"
-                    className="font-bold text-arxio-primary-container underline-offset-2 hover:underline"
-                    onClick={() => navigate(`/workspace/${latestWorkspaceId}`)}
-                  >
-                    Open workspace
-                  </button>
-                  <span className="text-arxio-on-surface-variant/60"> · </span>
-                  After you start processing, open the same page for full structured analysis, decks, and prep when the run completes.
-                </p>
-              ) : null}
-            </div>
-          </div>
-
-          <div id="recent-workspaces" className="mt-2">
-            <div className="mb-4 flex items-center justify-between gap-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-arxio-primary-container">Recent Workspaces</p>
-              <div className="flex items-center gap-3">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-arxio-on-surface-variant/60">{workspaceMeta.total} total</span>
+            {/* Recent workspaces */}
+            <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+              <div className="flex items-center justify-between gap-3 border-b border-slate-100 px-5 py-3.5">
+                <p className="text-sm font-bold text-slate-900">Recent workspaces</p>
                 <button
                   type="button"
                   onClick={() => navigate("/workspaces")}
-                  className="rounded-lg border border-arxio-outline-variant/30 bg-white px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-arxio-on-surface-variant transition hover:border-arxio-primary-container/45 hover:text-arxio-primary"
+                  className="text-xs font-semibold text-blue-600 hover:text-blue-800 transition"
                 >
-                  View all
+                  View all →
                 </button>
               </div>
-            </div>
-            {loading ? (
-              <div className="mt-3"><Loader label="Loading..." /></div>
-            ) : workspaceCards.length === 0 ? (
-              <p className="mt-3 text-sm text-arxio-on-surface-variant/80">No workspace yet. Upload a PDF to create your first real workspace card.</p>
-            ) : (
-              <div className="grid gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-3">
-                {workspaceCards.map((item, idx) => (
-                  (() => {
-                    const key = item.workspaceId || item.id || `${item.title}-${item.createdAt || idx}`;
-                    const isCompleted = String(item.status || "").toLowerCase() === WORKSPACE_STATUS.COMPLETED;
+
+              {loading ? (
+                <div className="flex items-center justify-center py-10">
+                  <Loader label="Loading..." />
+                </div>
+              ) : workspaceCards.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12 text-center px-6">
+                  <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M6 3h8l4 4v10a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" stroke="#94a3b8" strokeWidth="1.3" fill="none"/><path d="M14 3v5h4" stroke="#94a3b8" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  </div>
+                  <p className="text-sm font-semibold text-slate-600">No workspaces yet</p>
+                  <p className="mt-0.5 text-xs text-slate-400">Upload a PDF above to create your first workspace</p>
+                </div>
+              ) : (
+                <div className="divide-y divide-slate-100">
+                  {workspaceCards.map((item, idx) => {
+                    const key = item.workspaceId || item.id || idx;
+                    const name = (item.title || "Untitled").replace(/\.pdf$/i, "").replace(/[_-]/g, " ").trim();
+                    const isCompleted = String(item.status).toLowerCase() === WORKSPACE_STATUS.COMPLETED;
                     return (
-                      <article
+                      <div
                         key={key}
-                        className={`group relative overflow-hidden rounded-2xl border border-arxio-outline-variant/20 bg-white p-4 transition-all sm:p-5 ${
-                          item.canOpen ? "cursor-pointer hover:-translate-y-0.5 hover:border-arxio-primary-container/40 hover:shadow-[0_16px_30px_rgba(15,23,42,0.12)]" : ""
-                        }`}
-                        onClick={() => {
-                          if (!item.canOpen || !item.workspaceId) return;
-                          navigate(`/workspace/${item.workspaceId}`);
-                        }}
+                        onClick={() => item.workspaceId && navigate(`/workspace/${item.workspaceId}`)}
+                        className="group flex cursor-pointer items-center gap-4 px-5 py-4 transition hover:bg-slate-50"
                       >
-                        <span className="pointer-events-none absolute left-0 top-0 h-full w-1.5 bg-gradient-to-b from-arxio-primary-container to-arxio-tertiary" />
-                        <div className="relative mb-4 flex items-start justify-between gap-2">
-                          <div className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-arxio-primary-container/25 bg-arxio-primary-container/12 text-arxio-primary-container">
-                            {item.icon}
-                          </div>
-                          <StatusTag
-                            status={item.status}
-                            short
-                            className={
-                              isCompleted
-                                ? "rounded-md px-2 py-0.5 text-[9px] font-black tracking-tighter"
-                                : "rounded-md border-arxio-outline-variant/35 bg-arxio-surface-container-highest px-2 py-0.5 text-[9px] font-black text-arxio-on-surface-variant/80 tracking-tighter"
-                            }
-                          />
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-blue-100 bg-blue-50">
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M4 2h6l4 4v8a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z" stroke="#3b82f6" strokeWidth="1.2" fill="none"/>
+                            <path d="M9 2v4h4" stroke="#93c5fd" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M5.5 9h5M5.5 11.5h3" stroke="#93c5fd" strokeWidth="1" strokeLinecap="round"/>
+                          </svg>
                         </div>
-                        <p className="relative mb-1 truncate text-[15px] font-bold text-arxio-on-surface group-hover:text-blue-700 sm:text-base">
-                          {item.title}
-                        </p>
-                        <p className="relative mb-4 line-clamp-2 text-xs leading-relaxed text-arxio-on-surface-variant/75">{item.subtitle}</p>
-                        <p className="relative mb-3 text-[9px] uppercase tracking-widest text-arxio-on-surface-variant/55">Created {formatDate(item.createdAt)}</p>
-                        <div className="relative grid grid-cols-2 gap-3 rounded-xl border border-arxio-outline-variant/15 bg-arxio-surface-low px-3 py-3 text-xs sm:gap-4">
-                          <div>
-                            <p className="mb-1 text-[9px] uppercase tracking-widest text-arxio-on-surface-variant/55">{item.labelA}</p>
-                            <p className="text-sm font-bold tracking-tight text-arxio-on-surface">{item.metricA}</p>
-                          </div>
-                          <div>
-                            <p className="mb-1 text-[9px] uppercase tracking-widest text-arxio-on-surface-variant/55">{item.labelB}</p>
-                            <p className="text-sm font-bold tracking-tight text-arxio-on-surface">{item.metricB}</p>
-                          </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm font-semibold text-slate-800 group-hover:text-blue-700 transition-colors">{name}</p>
+                          <p className="text-[11px] text-slate-400 mt-0.5">{formatDate(item.createdAt)}</p>
                         </div>
-                        <div className="relative mt-3 h-1.5 overflow-hidden rounded-full bg-slate-100">
-                          <span className={`block h-full rounded-full ${isCompleted ? "w-full bg-emerald-500" : "w-2/3 bg-blue-500"}`} />
+                        <div className="flex shrink-0 items-center gap-3">
+                          <StatusTag status={item.status} short />
+                          {isCompleted && (
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="text-slate-300 group-hover:text-blue-400 transition-colors">
+                              <path d="M5 7l2 2 4-4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                          )}
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="text-slate-200 group-hover:text-slate-400 transition-colors">
+                            <path d="M5 3l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
                         </div>
-                        {item.canOpen ? (
-                          <div className="relative mt-4 flex flex-wrap items-center gap-2">
-                            <button
-                              type="button"
-                              className="rounded-lg border border-arxio-outline-variant/30 bg-white px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-arxio-primary transition hover:bg-arxio-surface-low"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                navigate(`/workspace/${item.workspaceId}`);
-                              }}
-                            >
-                              Open workspace
-                            </button>
-                            {!isCompleted ? (
-                              <button
-                                type="button"
-                                className="group/refresh relative overflow-hidden rounded-lg bg-gradient-to-br from-arxio-primary-container to-arxio-inverse-primary px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-70"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onFetchLatestStatus(item.workspaceId);
-                                }}
-                                disabled={statusRefreshId === item.workspaceId}
-                              >
-                                <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition group-hover/refresh:translate-x-full" />
-                                <span className="relative inline-flex items-center gap-1.5">
-                                  <span className={`${statusRefreshId === item.workspaceId ? "animate-spin" : "animate-pulse"} text-[11px]`}>⟳</span>
-                                  {statusRefreshId === item.workspaceId ? "Refreshing..." : "Fetch latest status"}
-                                </span>
-                              </button>
-                            ) : null}
-                          </div>
-                        ) : null}
-                        <div className="mt-4 border-t border-arxio-outline-variant/15 pt-3">
-                          <span className="inline-flex items-center gap-1 text-xs font-semibold text-blue-700">
-                            Continue workspace
-                            <span aria-hidden>→</span>
-                          </span>
-                        </div>
-                      </article>
+                      </div>
                     );
-                  })()
-                ))}
-              </div>
-            )}
-          </div>
+                  })}
+                </div>
+              )}
+            </div>
 
           </div>
+        </div>
       </section>
     </>
   );

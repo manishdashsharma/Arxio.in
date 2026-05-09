@@ -62,8 +62,7 @@ async def signup_service(data: SignupRequest) -> dict:
         "Use the code below to verify your email address.",
     )
 
-    tokens = _generate_tokens(doc)
-    return {**tokens, "user": _user_to_dict(doc)}
+    return {"email": data.email, "name": data.name}
 
 
 async def login_service(data: LoginRequest) -> dict:
@@ -72,6 +71,11 @@ async def login_service(data: LoginRequest) -> dict:
     if not user or not user.get("password") or not verify_password(data.password, user["password"]):
         err = Exception("Invalid email or password")
         err.status_code = 401
+        raise err
+
+    if not user.get("is_verified", False):
+        err = Exception("Please verify your email before logging in")
+        err.status_code = 403
         raise err
 
     tokens = _generate_tokens(user)
@@ -168,7 +172,7 @@ async def reset_password_service(data: ResetPasswordRequest) -> None:
     await cache_del(f"otp:forgot_password:{data.email}")
 
 
-async def verify_email_service(data: VerifyEmailRequest) -> None:
+async def verify_email_service(data: VerifyEmailRequest) -> dict:
     stored = await cache_get(f"otp:email_verify:{data.email}")
     if not stored or stored != data.otp:
         err = Exception("Invalid or expired OTP")
@@ -181,6 +185,15 @@ async def verify_email_service(data: VerifyEmailRequest) -> None:
         {"$set": {"is_verified": True, "updated_at": datetime.utcnow()}},
     )
     await cache_del(f"otp:email_verify:{data.email}")
+
+    user = await db["users"].find_one({"email": data.email, "is_active": True})
+    if not user:
+        err = Exception("User not found")
+        err.status_code = 404
+        raise err
+
+    tokens = _generate_tokens(user)
+    return {**tokens, "user": _user_to_dict(user)}
 
 
 async def resend_verification_service(data: ResendVerificationRequest) -> None:

@@ -1,67 +1,68 @@
-import { Button } from "../../../common/components";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { SIDEBAR_CONTENT } from "../../../core/ui/ui-content";
 import { SIDEBAR_ITEM_KEY } from "../../../core/ui/ui-enums";
 
-function SidebarIcon({ type, active = false }) {
-  const base = active ? "text-arxio-primary-container" : "text-arxio-on-surface-variant/70";
-  if (type === "grid") {
-    return (
-      <svg viewBox="0 0 16 16" className={`h-3.5 w-3.5 ${base}`} aria-hidden="true">
-        <rect x="2" y="2" width="5" height="5" rx="1" fill="currentColor" />
-        <rect x="9" y="2" width="5" height="5" rx="1" fill="currentColor" />
-        <rect x="2" y="9" width="5" height="5" rx="1" fill="currentColor" />
-        <rect x="9" y="9" width="5" height="5" rx="1" fill="currentColor" />
-      </svg>
-    );
-  }
-  if (type === "folder") {
-    return (
-      <svg viewBox="0 0 16 16" className={`h-3.5 w-3.5 ${base}`} aria-hidden="true">
-        <path d="M1.5 4.5h4l1.2 1.4H14a.8.8 0 0 1 .8.8v5.8a1 1 0 0 1-1 1H2.2a1 1 0 0 1-1-1V5.3a.8.8 0 0 1 .3-.8z" fill="currentColor" />
-      </svg>
-    );
-  }
-  if (type === "database") {
-    return (
-      <svg viewBox="0 0 16 16" className={`h-3.5 w-3.5 ${base}`} aria-hidden="true">
-        <ellipse cx="8" cy="3.5" rx="5.5" ry="2.2" fill="currentColor" />
-        <path d="M2.5 6v2.2c0 1.2 2.5 2.2 5.5 2.2s5.5-1 5.5-2.2V6" fill="currentColor" />
-        <path d="M2.5 10v2.2c0 1.2 2.5 2.2 5.5 2.2s5.5-1 5.5-2.2V10" fill="currentColor" />
-      </svg>
-    );
-  }
-  if (type === "trend") {
-    return (
-      <svg viewBox="0 0 16 16" className={`h-3.5 w-3.5 ${base}`} aria-hidden="true">
-        <path d="M2 12.5l3.8-4.1 2.2 2.4 3.7-5" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M10.5 5.8h2.7V8.5" stroke="currentColor" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    );
-  }
-  if (type === "stack") {
-    return (
-      <svg viewBox="0 0 16 16" className={`h-3.5 w-3.5 ${base}`} aria-hidden="true">
-        <path d="M8 1.5 14.5 4.2 8 7 1.5 4.2z" fill="currentColor" opacity="0.9" />
-        <path d="M1.5 6.8 8 9.5l6.5-2.7" stroke="currentColor" strokeWidth="1.2" fill="none" strokeLinecap="round" />
-        <path d="M1.5 9.5 8 12.2l6.5-2.7" stroke="currentColor" strokeWidth="1.2" fill="none" strokeLinecap="round" />
-      </svg>
-    );
-  }
-  return (
-    <svg viewBox="0 0 16 16" className={`h-3.5 w-3.5 ${base}`} aria-hidden="true">
-      <path d="M8 1.5l1.4 1.2 1.8-.1.8 1.7 1.6.9-.5 1.8 1 1.5-1 1.5.5 1.8-1.6.9-.8 1.7-1.8-.1L8 14.5l-1.4 1.2-1.8-.1-.8-1.7-1.6-.9.5-1.8-1-1.5 1-1.5-.5-1.8 1.6-.9.8-1.7 1.8.1z" fill="currentColor" />
-      <circle cx="8" cy="8" r="2" fill="#f8fafc" />
+const ICONS = {
+  grid: ({ cls }) => (
+    <svg viewBox="0 0 16 16" className={cls} fill="currentColor">
+      <rect x="2" y="2" width="5" height="5" rx="1.2" />
+      <rect x="9" y="2" width="5" height="5" rx="1.2" />
+      <rect x="2" y="9" width="5" height="5" rx="1.2" />
+      <rect x="9" y="9" width="5" height="5" rx="1.2" />
     </svg>
-  );
-}
+  ),
+  folder: ({ cls }) => (
+    <svg viewBox="0 0 16 16" className={cls} fill="currentColor">
+      <path d="M1.5 4.5h4l1.2 1.4H14a.8.8 0 0 1 .8.8v5.8a1 1 0 0 1-1 1H2.2a1 1 0 0 1-1-1V5.3a.8.8 0 0 1 .3-.8z" />
+    </svg>
+  ),
+  stack: ({ cls }) => (
+    <svg viewBox="0 0 16 16" className={cls} fill="none">
+      <path d="M8 1.5 14.5 4.2 8 7 1.5 4.2z" fill="currentColor" />
+      <path d="M1.5 6.8 8 9.5l6.5-2.7M1.5 9.5 8 12.2l6.5-2.7" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+    </svg>
+  ),
+};
 
-function rowClasses(active, collapsed) {
-  return `group relative flex items-center rounded-xl px-3 py-2.5 text-sm font-semibold tracking-tight transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300/70 ${collapsed ? "justify-center" : "gap-2.5"} ${
-    active
-      ? "bg-gradient-to-r from-blue-50 to-indigo-50 text-arxio-primary-container shadow-[inset_0_0_0_1px_rgba(59,130,246,0.22)]"
-      : "text-arxio-on-surface-variant/80 hover:translate-x-0.5 hover:bg-slate-100/80 hover:text-arxio-on-surface"
-  }`;
+function NavItem({ item, active, collapsed, workspaceLink }) {
+  const to = item.key === SIDEBAR_ITEM_KEY.WORKSPACES ? (workspaceLink || item.to) : item.to;
+  const Icon = ICONS[item.icon];
+  const iconCls = `h-4 w-4 shrink-0 transition-colors ${active ? "text-blue-600" : "text-slate-400"}`;
+
+  if (collapsed) {
+    return (
+      <NavLink
+        to={to}
+        title={item.label}
+        className={`flex h-10 w-10 items-center justify-center rounded-xl transition-all ${
+          active
+            ? "bg-blue-50 text-blue-600 shadow-sm ring-1 ring-blue-100"
+            : "text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+        }`}
+      >
+        {Icon && <Icon cls={iconCls} />}
+      </NavLink>
+    );
+  }
+
+  return (
+    <NavLink
+      to={to}
+      className={`group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] font-semibold transition-all ${
+        active
+          ? "bg-blue-50 text-blue-700"
+          : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
+      }`}
+    >
+      {active && (
+        <span className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r-full bg-blue-500" />
+      )}
+      <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${active ? "bg-blue-100" : "bg-slate-100 group-hover:bg-slate-200"}`}>
+        {Icon && <Icon cls={iconCls} />}
+      </span>
+      <span className="truncate">{item.label}</span>
+    </NavLink>
+  );
 }
 
 export function CyberSidebar({
@@ -73,146 +74,138 @@ export function CyberSidebar({
   onToggleCollapse,
   mobileMode = false,
 }) {
+  const navigate = useNavigate();
+  const initial = String(user?.name || "U").trim().charAt(0).toUpperCase();
+
   return (
-    <aside className={`flex h-full min-h-0 flex-col border border-slate-200/80 bg-white px-3 py-4 shadow-[0_16px_34px_rgba(15,23,42,0.08)] ${mobileMode ? "rounded-r-2xl rounded-l-none" : "rounded-2xl"}`}>
-      <div className="mb-5">
-        <div className={`rounded-2xl border border-slate-200/80 bg-gradient-to-br from-white via-blue-50/35 to-indigo-50/45 p-3 ${collapsed ? "px-2.5" : "px-3.5"}`}>
-          <div className={`flex items-center ${collapsed ? "justify-center" : "justify-between"} gap-2`}>
-            <div className={`min-w-0 ${collapsed ? "hidden" : "block"}`}>
-              <p className="truncate text-lg font-black tracking-tight text-slate-900">{SIDEBAR_CONTENT.BRAND_TITLE}</p>
-              <p className="mt-0.5 text-[11px] font-medium text-slate-500">
-                Smart student cockpit
-              </p>
-            </div>
-            <span className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-blue-200 bg-blue-50 text-sm ${collapsed ? "" : "mr-auto ml-0.5"}`}>
-              ✦
-            </span>
-            {onToggleCollapse ? (
+    <aside
+      className={`flex h-full min-h-0 flex-col bg-white border border-slate-200/70 shadow-sm ${
+        mobileMode ? "rounded-r-2xl rounded-l-none" : "rounded-2xl"
+      } ${collapsed ? "px-2 py-3 items-center" : "px-3 py-3"}`}
+    >
+      {/* Brand row */}
+      <div className={`mb-5 flex w-full items-center ${collapsed ? "flex-col gap-2" : "justify-between gap-2 px-1"}`}>
+        {collapsed ? (
+          <>
+            <img src="/logo.svg" alt="Arxio" className="h-8 w-8 rounded-xl" />
+            {onToggleCollapse && !mobileMode && (
               <button
                 type="button"
                 onClick={onToggleCollapse}
-                className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 transition hover:border-blue-300 hover:text-blue-600"
-                aria-label={mobileMode ? "Close sidebar" : (collapsed ? "Expand sidebar" : "Collapse sidebar")}
-                title={mobileMode ? "Close sidebar" : (collapsed ? "Expand sidebar" : "Collapse sidebar")}
+                className="flex h-7 w-7 items-center justify-center rounded-lg text-slate-300 transition hover:bg-slate-100 hover:text-slate-600"
+                title="Expand sidebar"
               >
-                {mobileMode ? (
-                  <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" aria-hidden="true">
-                    <path d="M4 4l8 8M12 4 4 12" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-                  </svg>
-                ) : (
-                  <svg viewBox="0 0 16 16" className={`h-3.5 w-3.5 transition-transform ${collapsed ? "rotate-180" : ""}`} aria-hidden="true">
-                    <path d="M10.5 3.5 6 8l4.5 4.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                )}
+                <svg viewBox="0 0 14 14" className="h-3 w-3 rotate-180" fill="none">
+                  <path d="M9 3 5 7l4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
               </button>
-            ) : null}
-          </div>
-          {!collapsed ? (
-            <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">
-              Focus. Build. Present.
-            </p>
-          ) : null}
-        </div>
+            )}
+          </>
+        ) : (
+          <>
+            <div className="flex items-center gap-2.5 min-w-0">
+              <img src="/logo.svg" alt="Arxio" className="h-7 w-7 shrink-0 rounded-xl" />
+              <span className="text-[15px] font-black tracking-tight text-slate-900 truncate">Arxio</span>
+            </div>
+            <div className="flex shrink-0 items-center gap-1">
+              {onToggleCollapse && !mobileMode && (
+                <button
+                  type="button"
+                  onClick={onToggleCollapse}
+                  className="flex h-7 w-7 items-center justify-center rounded-lg text-slate-300 transition hover:bg-slate-100 hover:text-slate-600"
+                  title="Collapse sidebar"
+                >
+                  <svg viewBox="0 0 14 14" className="h-3 w-3" fill="none">
+                    <path d="M9 3 5 7l4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </button>
+              )}
+              {mobileMode && onToggleCollapse && (
+                <button
+                  type="button"
+                  onClick={onToggleCollapse}
+                  className="flex h-7 w-7 items-center justify-center rounded-lg text-slate-400 transition hover:bg-rose-50 hover:text-rose-500"
+                >
+                  <svg viewBox="0 0 14 14" className="h-3 w-3" fill="none">
+                    <path d="M2 2l10 10M12 2 2 12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+                  </svg>
+                </button>
+              )}
+            </div>
+          </>
+        )}
       </div>
 
-      <nav className="flex-1 space-y-1.5">
-        {!collapsed ? (
-          <p className="mb-2 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">Main Menu</p>
-        ) : null}
-        {SIDEBAR_CONTENT.ITEMS.map((item) => {
-          const to = item.key === SIDEBAR_ITEM_KEY.WORKSPACES ? (workspaceLink || null) : item.to;
-          const active = item.key === activeItem;
-          const content = collapsed ? (
-            <span className="inline-flex w-full items-center justify-center">
-              <SidebarIcon type={item.icon} active={active} />
-            </span>
-          ) : (
-            <>
-              <span
-                className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border ${
-                  active ? "border-blue-200 bg-blue-50/80" : "border-slate-200 bg-white"
-                }`}
-              >
-                <SidebarIcon type={item.icon} active={active} />
-              </span>
-              <span className="truncate">{item.label}</span>
-              {item.key === SIDEBAR_ITEM_KEY.INTAKE ? (
-                <span className="ml-auto rounded-full border border-blue-200 bg-blue-50 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-blue-700">
-                  New
-                </span>
-              ) : null}
-            </>
-          );
-          if (to) {
-            return (
-              <NavLink
-                key={item.key}
-                to={to}
-                className={({ isActive }) => rowClasses(isActive || active, collapsed)}
-                title={collapsed ? item.label : undefined}
-              >
-                {active ? (
-                  <>
-                    <span className="absolute left-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full bg-blue-500" />
-                    {collapsed ? <span className="absolute -right-0.5 top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-blue-500" /> : null}
-                  </>
-                ) : null}
-                {content}
-              </NavLink>
-            );
-          }
-          if (item.href && !item.disabled) {
-            return (
-              <a
-                key={item.key}
-                href={item.href}
-                className={rowClasses(active, collapsed)}
-                title={collapsed ? item.label : undefined}
-              >
-                {active ? (
-                  <>
-                    <span className="absolute left-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full bg-blue-500" />
-                    {collapsed ? <span className="absolute -right-0.5 top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-blue-500" /> : null}
-                  </>
-                ) : null}
-                {content}
-              </a>
-            );
-          }
-          return null;
-        })}
+      {/* Nav */}
+      <nav className={`flex-1 ${collapsed ? "flex flex-col items-center gap-1" : "space-y-0.5"}`}>
+        {!collapsed && (
+          <p className="mb-1.5 px-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">Menu</p>
+        )}
+        {SIDEBAR_CONTENT.ITEMS.map((item) => (
+          <NavItem
+            key={item.key}
+            item={item}
+            active={item.key === activeItem}
+            collapsed={collapsed}
+            workspaceLink={workspaceLink}
+          />
+        ))}
       </nav>
 
-      <div className="mt-auto space-y-2 border-t border-slate-200 pt-5 text-xs text-arxio-on-surface-variant/70">
-        {!collapsed ? (
-          <p className="px-1 text-[10px] font-semibold text-slate-400">Shortcut: Cmd/Ctrl + B</p>
-        ) : null}
-        <div className={`flex items-center rounded-xl border border-slate-200 bg-slate-50/70 p-3 ${collapsed ? "justify-center" : "gap-3"}`}>
-          <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white text-[11px] font-bold text-slate-600 shadow-[inset_0_0_0_1px_rgba(148,163,184,0.22)]">
-            {String(user?.name || SIDEBAR_CONTENT.USER_FALLBACK_NAME).trim().charAt(0).toUpperCase() || "U"}
-          </span>
-          {!collapsed ? (
-            <div className="min-w-0">
-              <p className="truncate text-xs font-bold tracking-tight text-slate-900">
-                {user?.name || SIDEBAR_CONTENT.USER_FALLBACK_NAME}
-              </p>
-              <p className="truncate text-[10px] font-semibold text-slate-500">
-                {SIDEBAR_CONTENT.USER_ROLE_LABEL} plan
-              </p>
-            </div>
-          ) : null}
-        </div>
-        <Button
-          variant="outline"
-          onClick={onSignOut}
-          type="button"
-          className="mt-1 w-full border-slate-200 bg-white py-2 text-[11px] text-slate-600 hover:border-rose-200 hover:bg-rose-50 hover:text-rose-700"
-          title={collapsed ? SIDEBAR_CONTENT.SIGN_OUT_LABEL : undefined}
-        >
-          {collapsed ? "⎋" : SIDEBAR_CONTENT.SIGN_OUT_LABEL}
-        </Button>
+      {/* Footer */}
+      <div className={`mt-auto pt-3 border-t border-slate-100 ${collapsed ? "flex flex-col items-center gap-1 w-full" : "space-y-1"}`}>
+        {collapsed ? (
+          <>
+            <button
+              type="button"
+              onClick={() => navigate("/profile")}
+              title={user?.name || "Profile"}
+              className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-[11px] font-bold text-white shadow-sm transition hover:opacity-90"
+            >
+              {initial}
+            </button>
+            <button
+              type="button"
+              onClick={onSignOut}
+              title="Sign out"
+              className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-300 transition hover:bg-rose-50 hover:text-rose-500"
+            >
+              <svg viewBox="0 0 16 16" className="h-4 w-4" fill="none">
+                <path d="M6 2H3a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3M10.5 11l3-3-3-3M13.5 8H6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              type="button"
+              onClick={() => navigate("/profile")}
+              className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 transition hover:bg-slate-50"
+            >
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-[11px] font-bold text-white shadow-sm">
+                {initial}
+              </span>
+              <div className="min-w-0 flex-1 text-left">
+                <p className="truncate text-[13px] font-semibold text-slate-800">{user?.name || "User"}</p>
+                <p className="text-[10px] text-slate-400 capitalize">{user?.plan || "Free"} plan</p>
+              </div>
+              <svg viewBox="0 0 12 12" className="h-3 w-3 shrink-0 text-slate-300" fill="none">
+                <path d="M4.5 3l3 3-3 3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              onClick={onSignOut}
+              className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-[13px] font-medium text-slate-400 transition hover:bg-rose-50 hover:text-rose-600"
+            >
+              <svg viewBox="0 0 16 16" className="h-4 w-4 shrink-0" fill="none">
+                <path d="M6 2H3a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3M10.5 11l3-3-3-3M13.5 8H6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              Sign out
+            </button>
+          </>
+        )}
       </div>
     </aside>
   );
 }
-

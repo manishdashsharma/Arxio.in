@@ -16,6 +16,77 @@ function formatTime(iso) {
   return d.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
 }
 
+function parseInline(text) {
+  const parts = [];
+  const re = /(\*\*(.+?)\*\*|\*(.+?)\*|`(.+?)`)/g;
+  let last = 0;
+  let m;
+  while ((m = re.exec(text)) !== null) {
+    if (m.index > last) parts.push(text.slice(last, m.index));
+    if (m[2] !== undefined) parts.push(<strong key={m.index} className="font-semibold text-slate-900">{m[2]}</strong>);
+    else if (m[3] !== undefined) parts.push(<em key={m.index}>{m[3]}</em>);
+    else if (m[4] !== undefined) parts.push(<code key={m.index} className="rounded bg-slate-100 px-1 py-0.5 text-[11px] font-mono text-blue-700">{m[4]}</code>);
+    last = m.index + m[0].length;
+  }
+  if (last < text.length) parts.push(text.slice(last));
+  return parts;
+}
+
+function MarkdownMessage({ content }) {
+  const blocks = content.split(/\n{2,}/);
+  return (
+    <div className="space-y-2.5 text-sm leading-relaxed text-slate-700">
+      {blocks.map((block, bi) => {
+        const lines = block.split("\n").filter(l => l.trim());
+        if (!lines.length) return null;
+
+        const isNumbered = lines.every(l => /^\d+\.\s/.test(l.trim()));
+        const isBullet = lines.every(l => /^[-*]\s/.test(l.trim()));
+        const isHeading = lines.length === 1 && /^#{1,3}\s/.test(lines[0]);
+
+        if (isHeading) {
+          const text = lines[0].replace(/^#{1,3}\s/, "");
+          return <p key={bi} className="font-bold text-slate-900 text-[13px]">{parseInline(text)}</p>;
+        }
+
+        if (isNumbered) {
+          return (
+            <ol key={bi} className="space-y-2 pl-1">
+              {lines.map((l, i) => {
+                const text = l.replace(/^\d+\.\s*/, "");
+                return (
+                  <li key={i} className="flex gap-2.5">
+                    <span className="shrink-0 flex h-5 w-5 items-center justify-center rounded-full bg-blue-100 text-[10px] font-black text-blue-700 mt-0.5">{i + 1}</span>
+                    <span>{parseInline(text)}</span>
+                  </li>
+                );
+              })}
+            </ol>
+          );
+        }
+
+        if (isBullet) {
+          return (
+            <ul key={bi} className="space-y-1.5 pl-1">
+              {lines.map((l, i) => {
+                const text = l.replace(/^[-*]\s*/, "");
+                return (
+                  <li key={i} className="flex gap-2.5">
+                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-500" />
+                    <span>{parseInline(text)}</span>
+                  </li>
+                );
+              })}
+            </ul>
+          );
+        }
+
+        return <p key={bi}>{parseInline(lines.join(" "))}</p>;
+      })}
+    </div>
+  );
+}
+
 export function WorkspaceChatPanel({ workspaceId, workspaceReady, chatAllowed, onUsageSync }) {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -126,7 +197,7 @@ export function WorkspaceChatPanel({ workspaceId, workspaceReady, chatAllowed, o
         )}
       </header>
 
-      <div ref={listRef} className="max-h-[28rem] space-y-3 overflow-y-auto bg-gradient-to-b from-slate-50/60 to-white px-3 py-4 sm:px-4 md:px-5">
+      <div ref={listRef} className="space-y-3 bg-gradient-to-b from-slate-50/60 to-white px-3 py-4 sm:px-4 md:px-5">
         <div className="flex items-center gap-2 pb-1">
           <div className="h-px flex-1 bg-slate-200" />
           <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">Conversation</p>
@@ -167,7 +238,10 @@ export function WorkspaceChatPanel({ workspaceId, workspaceReady, chatAllowed, o
                   }`}
                   aria-hidden
                 />
-                <p className="whitespace-pre-wrap text-sm leading-relaxed">{m.content}</p>
+                {isUser
+                  ? <p className="whitespace-pre-wrap text-sm leading-relaxed">{m.content}</p>
+                  : <MarkdownMessage content={m.content} />
+                }
                 <p className="mt-1 text-right text-[10px] opacity-55">{formatTime(m.createdAt)}</p>
               </div>
               {isUser ? <span className="mt-1 hidden h-7 w-7 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-[10px] font-black text-slate-500 sm:inline-flex">You</span> : null}

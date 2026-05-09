@@ -613,64 +613,58 @@ export const StructuredAnalysisPanel = memo(function StructuredAnalysisPanel({ a
 
   return (
     <div
-      className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_14px_28px_rgba(15,23,42,0.08)] sm:rounded-3xl"
+      className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
       onKeyDown={onKeyNav}
       role="region"
       aria-label="Structured paper analysis"
     >
-      <div className="z-10 border-b border-slate-200 bg-gradient-to-r from-white to-slate-50 px-3 py-3 sm:px-4">
-        <div className="mb-3 flex items-center justify-between gap-2">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">Study mode</p>
-          <span className="rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-semibold text-slate-500">
-            {visibleTabs.findIndex((item) => item.id === activeTab) + 1}/{visibleTabs.length}
-          </span>
-        </div>
+      {/* Mode selector — clean 3-column */}
+      <div className="grid grid-cols-3 border-b border-slate-200">
+        {MODE_GROUPS.map((item) => (
+          <button
+            key={item.id}
+            type="button"
+            onClick={() => {
+              setMode(item.id);
+              if (!item.tabIds.includes(activeTab)) {
+                setTab(item.tabIds[0]);
+              }
+            }}
+            className={`px-4 py-3.5 text-left transition-colors border-r last:border-r-0 border-slate-200 ${
+              mode === item.id
+                ? "bg-blue-50 border-b-2 border-b-blue-500"
+                : "bg-white hover:bg-slate-50"
+            }`}
+          >
+            <p className={`text-xs font-bold ${mode === item.id ? "text-blue-700" : "text-slate-700"}`}>{item.label}</p>
+            <p className="text-[10px] text-slate-400 mt-0.5">{MODE_SUBTITLE[item.id]}</p>
+          </button>
+        ))}
+      </div>
 
-        <div className="grid gap-2 sm:grid-cols-3">
-          {MODE_GROUPS.map((item) => (
+      {/* Sub-tabs — horizontal pill strip */}
+      <div className="flex gap-1.5 overflow-x-auto border-b border-slate-100 bg-slate-50 px-4 py-2.5">
+        {visibleTabs.map((t) => {
+          const active = t.id === activeTab;
+          return (
             <button
-              key={item.id}
+              key={t.id}
               type="button"
-              onClick={() => {
-                setMode(item.id);
-                if (!item.tabIds.includes(activeTab)) {
-                  setTab(item.tabIds[0]);
-                }
-              }}
-              className={`rounded-xl border px-3 py-2 text-left transition ${
-                mode === item.id
-                  ? "border-blue-300 bg-blue-50"
-                  : "border-slate-200 bg-white hover:border-slate-300"
+              onClick={() => setTab(t.id)}
+              className={`shrink-0 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
+                active
+                  ? "bg-blue-600 text-white shadow-sm"
+                  : "bg-white border border-slate-200 text-slate-600 hover:border-blue-300 hover:text-blue-700"
               }`}
             >
-              <p className={`text-xs font-semibold ${mode === item.id ? "text-blue-700" : "text-slate-800"}`}>{item.label}</p>
-              <p className="mt-0.5 text-[11px] text-slate-500">{MODE_SUBTITLE[item.id]}</p>
-              <p className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-slate-400">{item.tabIds.length} sections</p>
+              {t.label}
             </button>
-          ))}
-        </div>
-
-        <div className="mt-3 -mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1">
-          {visibleTabs.map((t) => {
-            const active = t.id === activeTab;
-            return (
-              <button
-                key={t.id}
-                type="button"
-                onClick={() => setTab(t.id)}
-                className={`shrink-0 rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
-                  active
-                    ? "border-blue-300 bg-blue-600 text-white"
-                    : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-900"
-                }`}
-              >
-                {t.label}
-              </button>
-            );
-          })}
-        </div>
+          );
+        })}
       </div>
-      <div className="max-h-[min(72vh,56rem)] overflow-y-auto p-3 sm:p-4 md:p-6" role="tabpanel">
+
+      {/* Content — no height constraint, flows naturally */}
+      <div className="p-4 md:p-6" role="tabpanel">
         <ActivePanel tabId={activeTab} analysis={safeAnalysis} omitPaperHeader={omitPaperHeader} />
       </div>
     </div>
