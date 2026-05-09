@@ -9,7 +9,7 @@ export const SIDEBAR_CONTENT = Object.freeze({
   ITEMS: [
     { key: SIDEBAR_ITEM_KEY.DASHBOARD, label: "Dashboard", icon: "grid", to: "/dashboard" },
     { key: SIDEBAR_ITEM_KEY.WORKSPACES, label: "Workspaces", icon: "folder", to: "/workspaces" },
-    { key: SIDEBAR_ITEM_KEY.INTAKE, label: "Data Intake", icon: "database", href: "/dashboard#upload" },
+    // { key: SIDEBAR_ITEM_KEY.INTAKE, label: "Data Intake", icon: "database", href: "/dashboard#upload" },
     { key: SIDEBAR_ITEM_KEY.BILLING, label: "Plans", icon: "stack", to: "/billing" },
     { key: SIDEBAR_ITEM_KEY.PROFILE, label: "Profile", icon: "gear", to: "/profile" },
   ],

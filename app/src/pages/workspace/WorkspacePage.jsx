@@ -26,7 +26,8 @@ export function WorkspacePage() {
 
   useEffect(() => {
     if (!workspaceId) return undefined;
-    if (status?.status !== WORKSPACE_STATUS.COMPLETED && status?.status !== WORKSPACE_STATUS.FAILED) return undefined;
+    const normalized = String(status?.status || "").toLowerCase();
+    if (normalized !== WORKSPACE_STATUS.COMPLETED && normalized !== WORKSPACE_STATUS.FAILED) return undefined;
     let cancelled = false;
     async function fetchWorkspace() {
       try {
@@ -100,18 +101,22 @@ export function WorkspacePage() {
     return Math.max(0, Math.min(100, Number(percent) || 0));
   }, [status?.percent]);
 
+  const normalizedStatus = String(status?.status || "").toLowerCase();
+  const isCompleted = normalizedStatus === WORKSPACE_STATUS.COMPLETED;
+  const isFailed = normalizedStatus === WORKSPACE_STATUS.FAILED;
+
   const pptAllowed = plan.allows("ppt");
 
   return (
     <section className="flex h-full min-h-0 flex-col overflow-hidden rounded-xl border border-arxio-outline-variant/10 bg-arxio-bg">
-          <header className="flex flex-wrap items-center justify-between gap-3 border-b border-arxio-surface-container/20 bg-white/85 px-4 py-3 backdrop-blur">
+          <header className="flex flex-wrap items-center justify-between gap-3 border-b border-arxio-surface-container/20 bg-white/85 px-3 py-3 backdrop-blur sm:px-4">
             <div className="min-w-0">
               <p className="text-xs font-medium text-arxio-on-surface-variant/70">{WORKSPACE_PAGE_COPY.HEADER_LABEL}</p>
               <h1 className="truncate text-lg font-bold tracking-tight text-arxio-on-surface md:text-xl">
                 {workspace?.originalName || `ID: ${workspaceId}`}
               </h1>
             </div>
-            <div className="flex shrink-0 items-center gap-2">
+            <div className="flex w-full shrink-0 items-center justify-between gap-2 sm:w-auto sm:justify-start">
               <Link
                 to="/dashboard"
                 className="rounded-lg border border-arxio-outline-variant/30 px-3 py-1.5 text-[11px] font-semibold text-arxio-on-surface-variant transition hover:border-arxio-primary-container/40 hover:text-arxio-on-surface"
@@ -122,7 +127,7 @@ export function WorkspacePage() {
             </div>
           </header>
 
-          <div className="flex flex-1 flex-col overflow-y-auto px-4 pb-8 pt-4">
+          <div className="flex flex-1 flex-col overflow-y-auto px-3 pb-7 pt-3 sm:px-4 sm:pb-8 sm:pt-4">
             <PlanStatusStrip className="mb-4" />
 
             {statusLoading ? (
@@ -135,7 +140,7 @@ export function WorkspacePage() {
               <p className="mt-4 rounded-lg border border-rose-300 bg-rose-50 px-3 py-2 text-xs text-rose-700">{statusError || error}</p>
             ) : null}
 
-            {status && status.status !== WORKSPACE_STATUS.COMPLETED ? (
+            {status && !isCompleted ? (
               <div className="mt-4 rounded-2xl border border-arxio-outline-variant/20 bg-white p-6 shadow-sm">
                 <p className="text-sm font-semibold text-arxio-on-surface">{status.step || WORKSPACE_PAGE_COPY.PROCESSING_FALLBACK_STEP}</p>
                 <div className="mt-4 h-2 overflow-hidden rounded-full bg-arxio-surface-container-highest">
@@ -145,15 +150,15 @@ export function WorkspacePage() {
                   />
                 </div>
                 <p className="mt-2 text-xs text-arxio-on-surface-variant">{progress}% completed</p>
-                {status.status === WORKSPACE_STATUS.FAILED ? (
+                {isFailed ? (
                   <p className="mt-3 text-xs text-rose-700">{status.errorMessage || WORKSPACE_PAGE_COPY.PROCESSING_FAILED_FALLBACK}</p>
                 ) : null}
               </div>
             ) : null}
 
-            {status?.status === WORKSPACE_STATUS.COMPLETED && workspace ? (
+            {isCompleted ? (
               <div className="flex min-h-0 flex-1 flex-col gap-8">
-                {analysis ? (
+                {workspace && analysis ? (
                   <div className="relative overflow-hidden rounded-3xl border border-arxio-outline-variant/25 bg-white shadow-[0_16px_40px_rgba(15,23,42,0.12)]">
                     <div className="pointer-events-none absolute inset-0 arxio-grid-overlay opacity-[0.35]" />
                     <div className="pointer-events-none absolute -right-20 -top-24 h-56 w-56 rounded-full bg-arxio-primary-container/25 blur-3xl" />
@@ -230,24 +235,47 @@ export function WorkspacePage() {
                       </div>
                     </div>
                   </div>
-                ) : null}
-
-                <div>
-                  <div className="mb-4 flex flex-wrap items-end justify-between gap-2 rounded-2xl border border-arxio-outline-variant/20 bg-white p-4">
-                    <div>
-                      <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-arxio-primary-container">{WORKSPACE_PAGE_COPY.PREP_KICKER}</p>
-                      <h3 className="mt-1 text-lg font-bold tracking-tight text-arxio-on-surface">{WORKSPACE_PAGE_COPY.PREP_TITLE}</h3>
-                      <p className="mt-1 max-w-2xl text-xs text-arxio-on-surface-variant/85">
-                        {WORKSPACE_PAGE_COPY.PREP_SUBTITLE}
-                      </p>
-                    </div>
+                ) : (
+                  <div className="rounded-2xl border border-slate-200 bg-white p-4">
+                    <Loader label="Loading structured analysis..." />
                   </div>
-                  <StructuredAnalysisPanel analysis={analysis} embedMeta={{ omitPaperHeader: Boolean(analysis?.paperTitle) }} />
-                </div>
+                )}
 
+              </div>
+            ) : null}
+
+            <div className="mt-6">
+              <div className="mb-4 flex flex-wrap items-end justify-between gap-2 rounded-2xl border border-arxio-outline-variant/20 bg-white p-4">
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-arxio-primary-container">{WORKSPACE_PAGE_COPY.PREP_KICKER}</p>
+                  <h3 className="mt-1 text-lg font-bold tracking-tight text-arxio-on-surface">{WORKSPACE_PAGE_COPY.PREP_TITLE}</h3>
+                  <p className="mt-1 max-w-2xl text-xs text-arxio-on-surface-variant/85">
+                    {WORKSPACE_PAGE_COPY.PREP_SUBTITLE}
+                  </p>
+                </div>
+              </div>
+
+              {isCompleted ? (
+                workspace ? (
+                  <StructuredAnalysisPanel analysis={analysis} embedMeta={{ omitPaperHeader: Boolean(analysis?.paperTitle) }} />
+                ) : (
+                  <div className="rounded-2xl border border-slate-200 bg-white p-4">
+                    <Loader label="Loading structured analysis..." />
+                  </div>
+                )
+              ) : (
+                <div className="rounded-2xl border border-slate-200 bg-white px-5 py-6">
+                  <p className="text-sm font-medium text-slate-700">Structured analysis will appear here after processing completes.</p>
+                  <p className="mt-1 text-xs text-slate-500">You can use Study Chat meanwhile for quick Q&A and speaking scripts.</p>
+                </div>
+              )}
+            </div>
+
+            {workspaceId ? (
+              <div className="mt-6">
                 <WorkspaceChatPanel
                   workspaceId={workspaceId}
-                  workspaceReady={status?.status === WORKSPACE_STATUS.COMPLETED}
+                  workspaceReady={isCompleted}
                   chatAllowed={Boolean(plan.chatAllowed)}
                   onUsageSync={plan.refresh}
                 />

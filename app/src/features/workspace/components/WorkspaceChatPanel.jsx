@@ -105,39 +105,33 @@ export function WorkspaceChatPanel({ workspaceId, workspaceReady, chatAllowed, o
 
   return (
     <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_14px_30px_rgba(15,23,42,0.08)]">
-      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-slate-50/70 px-4 py-3 md:px-5">
-        <div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-arxio-primary-container">Study Chat</p>
-          <p className="text-xs text-slate-600">Ask follow-ups, practice viva, or request speaking scripts.</p>
+      <header className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 bg-white px-3 py-3 sm:gap-3 sm:px-4 md:px-5">
+        <div className="inline-flex items-center gap-2">
+          <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-blue-200 bg-blue-50 text-[10px] font-black text-blue-700">
+            AI
+          </span>
+          <div>
+            <p className="text-sm font-semibold text-slate-900">Study Chat</p>
+            <p className="text-[11px] text-slate-500">Realtime workspace assistant</p>
+          </div>
         </div>
         {!workspaceReady ? (
-          <span className="rounded-md border border-amber-300 bg-amber-50 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-amber-700">
-            Waiting for completion
+          <span className="rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-amber-700">
+            Waiting
           </span>
         ) : (
-          <span className="rounded-md border border-emerald-300 bg-emerald-50 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-emerald-700">
-            Ready
+          <span className="rounded-full border border-emerald-300 bg-emerald-50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-emerald-700">
+            Online
           </span>
         )}
       </header>
 
-      <div className="border-b border-slate-200 px-4 py-2 md:px-5">
-        <div className="flex flex-wrap gap-1.5">
-          {QUICK_PROMPTS.map((prompt) => (
-            <button
-              key={prompt}
-              type="button"
-              onClick={() => applyPrompt(prompt)}
-              disabled={!workspaceReady || !chatAllowed || sending}
-              className="rounded-md border border-slate-300 bg-white px-2 py-1 text-[10px] font-semibold text-slate-600 transition hover:border-arxio-primary-container/45 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              {prompt}
-            </button>
-          ))}
+      <div ref={listRef} className="max-h-[28rem] space-y-3 overflow-y-auto bg-gradient-to-b from-slate-50/60 to-white px-3 py-4 sm:px-4 md:px-5">
+        <div className="flex items-center gap-2 pb-1">
+          <div className="h-px flex-1 bg-slate-200" />
+          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">Conversation</p>
+          <div className="h-px flex-1 bg-slate-200" />
         </div>
-      </div>
-
-      <div ref={listRef} className="max-h-96 space-y-3 overflow-y-auto bg-white px-4 py-4 md:px-5">
         {loading ? (
           <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-500">
             Loading conversation...
@@ -157,26 +151,26 @@ export function WorkspaceChatPanel({ workspaceId, workspaceReady, chatAllowed, o
               key={m.messageId || `${m.role}-${m.createdAt}-${m.content?.slice(0, 16)}`}
               className={`flex gap-2 ${isUser ? "justify-end" : "justify-start"}`}
             >
-              {!isUser ? (
-                <span className="mt-1 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-blue-200 bg-blue-50 text-[10px] font-black text-blue-700">
-                  AI
-                </span>
-              ) : null}
+              {!isUser ? <span className="mt-1 hidden h-7 w-7 shrink-0 items-center justify-center rounded-full border border-blue-200 bg-blue-50 text-[10px] font-black text-blue-700 sm:inline-flex">AI</span> : null}
               <div
-                className={`max-w-[85%] rounded-2xl border px-3 py-2 ${
+                className={`relative max-w-[92%] rounded-2xl border px-3 py-2.5 sm:max-w-[85%] ${
                   isUser
                     ? "border-blue-200 bg-blue-50 text-slate-900"
-                    : "border-slate-200 bg-slate-50 text-slate-700"
+                    : "border-slate-200 bg-white text-slate-700 shadow-[0_4px_14px_rgba(15,23,42,0.05)]"
                 }`}
               >
+                <span
+                  className={`pointer-events-none absolute top-3 h-2.5 w-2.5 rotate-45 border ${
+                    isUser
+                      ? "-right-1.5 border-l-0 border-b-0 border-blue-200 bg-blue-50"
+                      : "-left-1.5 border-r-0 border-t-0 border-slate-200 bg-white"
+                  }`}
+                  aria-hidden
+                />
                 <p className="whitespace-pre-wrap text-sm leading-relaxed">{m.content}</p>
                 <p className="mt-1 text-right text-[10px] opacity-55">{formatTime(m.createdAt)}</p>
               </div>
-              {isUser ? (
-                <span className="mt-1 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-[10px] font-black text-slate-500">
-                  You
-                </span>
-              ) : null}
+              {isUser ? <span className="mt-1 hidden h-7 w-7 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-[10px] font-black text-slate-500 sm:inline-flex">You</span> : null}
             </article>
           );
         })}
@@ -197,7 +191,23 @@ export function WorkspaceChatPanel({ workspaceId, workspaceReady, chatAllowed, o
         ) : null}
       </div>
 
-      <form className="border-t border-slate-200 bg-slate-50/70 px-4 py-3 md:px-5" onSubmit={onSubmit}>
+      <div className="border-t border-slate-200 bg-slate-50/50 px-3 py-2 sm:px-4 md:px-5">
+        <div className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1">
+          {QUICK_PROMPTS.map((prompt) => (
+            <button
+              key={prompt}
+              type="button"
+              onClick={() => applyPrompt(prompt)}
+              disabled={!workspaceReady || !chatAllowed || sending}
+              className="shrink-0 rounded-full border border-slate-300 bg-white px-2.5 py-1 text-[10px] font-semibold text-slate-600 transition hover:border-arxio-primary-container/45 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              {prompt}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <form className="border-t border-slate-200 bg-white px-3 py-3 sm:px-4 md:px-5" onSubmit={onSubmit}>
         <textarea
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
@@ -212,7 +222,7 @@ export function WorkspaceChatPanel({ workspaceId, workspaceReady, chatAllowed, o
           <button
             type="submit"
             disabled={!canSend}
-            className="rounded-md bg-gradient-to-br from-arxio-primary-container to-arxio-inverse-primary px-3 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-full bg-gradient-to-br from-arxio-primary-container to-arxio-inverse-primary px-4 py-2 text-[10px] font-semibold uppercase tracking-widest text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {sending ? "Sending..." : "Send"}
           </button>
