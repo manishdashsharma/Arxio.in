@@ -146,7 +146,7 @@ export function ProfilePage() {
 
               {/* Plan card */}
               <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-                <div className={`bg-gradient-to-r ${planGradient} px-5 py-4 flex items-center justify-between gap-3`}>
+                <div className={`bg-linear-to-r ${planGradient} px-5 py-4 flex items-center justify-between gap-3`}>
                   <div>
                     <p className="text-[10px] font-bold uppercase tracking-widest opacity-70 mb-0.5">Current plan</p>
                     <p className="text-xl font-black tracking-tight">{plan.displayName}</p>

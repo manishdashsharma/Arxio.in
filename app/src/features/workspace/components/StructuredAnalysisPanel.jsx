@@ -78,7 +78,7 @@ const SlideRow = memo(function SlideRow({ slide }) {
         <span className="shrink-0 pt-1 text-slate-400">{open ? "−" : "+"}</span>
       </button>
       {open ? (
-        <div className="border-t border-slate-200 px-3 pb-4 pt-1 md:px-4 md:pl-[4.25rem]">
+        <div className="border-t border-slate-200 px-3 pb-4 pt-1 md:px-4 md:pl-17">
           {bullets.length ? (
             <ul className="space-y-2 text-sm text-slate-600">
               {bullets.map((b, bi) => (

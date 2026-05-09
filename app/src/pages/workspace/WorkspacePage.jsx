@@ -38,7 +38,7 @@ function SlideCard({ slide }) {
         </svg>
       </button>
       {open && (
-        <div className="border-t border-slate-100 px-4 pb-4 pt-3 pl-[3.75rem]">
+        <div className="border-t border-slate-100 px-4 pb-4 pt-3 pl-15">
           {slide.bullets?.length > 0 && (
             <ul className="space-y-2 mb-4">
               {slide.bullets.map((b, i) => (
@@ -261,10 +261,10 @@ function PresentationModal({ slides, title, onClose }) {
   const animClass = dir >= 0 ? "pres-slide-in" : "pres-slide-in-back";
 
   return createPortal(
-    <div className="fixed inset-0 z-[100] flex flex-col" style={{ background: "#090912" }}>
+    <div className="fixed inset-0 z-100 flex flex-col" style={{ background: "#090912" }}>
 
       {/* ── TOP HUD ── */}
-      <div className="shrink-0 flex items-center justify-between border-b border-white/[0.06] bg-black/50 px-4 py-2.5 backdrop-blur-xl">
+      <div className="shrink-0 flex items-center justify-between border-b border-white/6 bg-black/50 px-4 py-2.5 backdrop-blur-xl">
         <div className="flex items-center gap-2.5">
           <button
             type="button"
@@ -282,7 +282,7 @@ function PresentationModal({ slides, title, onClose }) {
             </svg>
             Slides
           </button>
-          <p className="hidden sm:block text-[11px] text-slate-500 truncate max-w-[260px] leading-none">{title}</p>
+          <p className="hidden sm:block text-[11px] text-slate-500 truncate max-w-65 leading-none">{title}</p>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-[11px] font-bold tabular-nums text-slate-500">{current + 1}<span className="text-slate-700 mx-0.5">/</span>{total}</span>
@@ -310,7 +310,7 @@ function PresentationModal({ slides, title, onClose }) {
 
         {/* Thumbnail strip */}
         {showThumbs && (
-          <div ref={thumbsRef} className="w-44 shrink-0 overflow-y-auto border-r border-white/[0.06] bg-black/30 py-3 px-2.5 space-y-2">
+          <div ref={thumbsRef} className="w-44 shrink-0 overflow-y-auto border-r border-white/6 bg-black/30 py-3 px-2.5 space-y-2">
             {slides.map((s, i) => {
               const t = PRES_THEMES[i % PRES_THEMES.length];
               const active = i === current;
@@ -322,7 +322,7 @@ function PresentationModal({ slides, title, onClose }) {
                   onClick={() => goTo(i)}
                   className={`w-full rounded-xl overflow-hidden border transition-all text-left ${active ? "border-blue-500 ring-2 ring-blue-500/30 shadow-[0_0_16px_rgba(59,130,246,0.25)]" : "border-white/5 hover:border-white/15"}`}
                 >
-                  <div className={`relative w-full bg-gradient-to-br ${t.header}`} style={{ aspectRatio: "16/9" }}>
+                  <div className={`relative w-full bg-linear-to-br ${t.header}`} style={{ aspectRatio: "16/9" }}>
                     {i === 0 ? (
                       <div className="absolute inset-0 flex items-center justify-center p-2">
                         <p className="text-[7px] font-black text-white text-center leading-tight line-clamp-3">{s.title}</p>
@@ -372,7 +372,7 @@ function PresentationModal({ slides, title, onClose }) {
               >
                 {isTitle ? (
                   /* ── TITLE SLIDE ── */
-                  <div className={`absolute inset-0 bg-gradient-to-br ${theme.header} flex flex-col items-center justify-center px-12 text-center overflow-hidden`}>
+                  <div className={`absolute inset-0 bg-linear-to-br ${theme.header} flex flex-col items-center justify-center px-12 text-center overflow-hidden`}>
                     {/* Decorative orbs */}
                     <div className="absolute -top-16 -left-16 h-56 w-56 rounded-full bg-white/5 blur-3xl" />
                     <div className="absolute -bottom-16 -right-16 h-56 w-56 rounded-full bg-white/5 blur-3xl" />
@@ -401,14 +401,14 @@ function PresentationModal({ slides, title, onClose }) {
                   /* ── CONTENT SLIDE ── */
                   <div className="absolute inset-0 flex flex-col bg-white">
                     {/* Header band */}
-                    <div className={`shrink-0 bg-gradient-to-r ${theme.header} px-8 flex items-center justify-between`} style={{ height: "36%" }}>
+                    <div className={`shrink-0 bg-linear-to-r ${theme.header} px-8 flex items-center justify-between`} style={{ height: "36%" }}>
                       <div className="min-w-0 flex-1">
                         <p className="text-[clamp(0.45rem,0.75vw,0.6rem)] font-semibold uppercase tracking-[0.2em] text-white/40 mb-1.5">{title}</p>
                         <h2 className="text-[clamp(0.85rem,2.6vw,1.8rem)] font-black text-white leading-tight">
                           {slide?.title}
                         </h2>
                       </div>
-                      <span className="shrink-0 ml-4 text-[clamp(2rem,5.5vw,4.5rem)] font-black text-white/[0.08] tabular-nums leading-none select-none">
+                      <span className="shrink-0 ml-4 text-[clamp(2rem,5.5vw,4.5rem)] font-black text-white/8 tabular-nums leading-none select-none">
                         {String(slide?.slideNumber ?? current + 1).padStart(2, "0")}
                       </span>
                     </div>
@@ -452,7 +452,7 @@ function PresentationModal({ slides, title, onClose }) {
 
           {/* Speaker notes */}
           {notesOpen && (
-            <div className="w-full max-w-5xl rounded-xl border border-white/[0.07] bg-white/[0.04] px-5 py-3 backdrop-blur-sm">
+            <div className="w-full max-w-5xl rounded-xl border border-white/[0.07] bg-white/4 px-5 py-3 backdrop-blur-sm">
               <p className="text-[9px] font-bold uppercase tracking-widest text-slate-600 mb-1.5">Speaker note</p>
               <p className="text-[clamp(0.7rem,1.1vw,0.85rem)] text-slate-300 leading-relaxed">
                 {slide?.speakerNote || "No speaker note for this slide."}
@@ -463,9 +463,9 @@ function PresentationModal({ slides, title, onClose }) {
       </div>
 
       {/* ── BOTTOM BAR ── */}
-      <div className="shrink-0 flex items-center justify-between border-t border-white/[0.06] bg-black/40 px-5 py-2.5 backdrop-blur-xl">
+      <div className="shrink-0 flex items-center justify-between border-t border-white/6 bg-black/40 px-5 py-2.5 backdrop-blur-xl">
         {/* Progress */}
-        <div className="flex items-center gap-2.5 flex-1 max-w-[180px]">
+        <div className="flex items-center gap-2.5 flex-1 max-w-45">
           <div className="flex-1 h-0.5 rounded-full bg-white/10 overflow-hidden">
             <div className="h-full rounded-full bg-blue-500 transition-all duration-300" style={{ width: `${progress}%` }} />
           </div>
@@ -523,7 +523,7 @@ function SlidesTab({ analysis, paperTitle }) {
           <button
             type="button"
             onClick={() => setPresenting(true)}
-            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 px-4 py-2 text-xs font-bold text-white shadow-sm transition hover:brightness-110"
+            className="inline-flex items-center gap-2 rounded-xl bg-linear-to-br from-blue-600 to-indigo-600 px-4 py-2 text-xs font-bold text-white shadow-sm transition hover:brightness-110"
           >
             <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
               <polygon points="2,1 12,6.5 2,12" fill="currentColor"/>

@@ -119,7 +119,7 @@ function ArrowIcon() {
 
 function Hero() {
   return (
-    <section className="relative overflow-hidden border-b border-border bg-gradient-to-b from-white to-slate-50/60">
+    <section className="relative overflow-hidden border-b border-border bg-linear-to-b from-white to-slate-50/60">
       <div className="absolute inset-0 hero-grid opacity-30" />
       <div className="hero-aurora absolute -top-20 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-brand/20 blur-3xl" />
       <div className="hero-aurora absolute -right-20 top-10 h-72 w-72 rounded-full bg-indigo-200/30 blur-3xl" />
@@ -277,7 +277,7 @@ function NightBeforeComparison() {
           </p>
         </div>
         <div className="overflow-x-auto rounded-2xl border border-border bg-surface">
-          <div className="min-w-[680px]">
+          <div className="min-w-170">
             <div className="grid grid-cols-[120px_1fr_1fr] bg-surface-container text-xs font-semibold uppercase tracking-wider text-subtle">
               <div className="border-r border-border px-4 py-3">Time</div>
               <div className="border-r border-border px-4 py-3">Without Arxio</div>
@@ -299,7 +299,7 @@ function NightBeforeComparison() {
 
 function OutputsSection() {
   return (
-    <section className="border-y border-border bg-gradient-to-b from-white to-slate-50/55 py-16 sm:py-20 wow-rise">
+    <section className="border-y border-border bg-linear-to-b from-white to-slate-50/55 py-16 sm:py-20 wow-rise">
       <div className="mx-auto w-full max-w-6xl px-4 sm:px-5 md:px-8">
         <div className="grid gap-10 lg:grid-cols-[1fr_1fr] lg:items-start">
           <div>
@@ -425,7 +425,7 @@ function PricingPreview() {
   }));
 
   return (
-    <section id="pricing" className="border-y border-border bg-gradient-to-b from-white to-slate-50/55 py-16 sm:py-20 wow-rise">
+    <section id="pricing" className="border-y border-border bg-linear-to-b from-white to-slate-50/55 py-16 sm:py-20 wow-rise">
       <div className="mx-auto w-full max-w-6xl px-4 sm:px-5 md:px-8">
         <div className="mb-10 text-center">
           <p className="text-[11px] font-semibold uppercase tracking-widest text-brand">Pricing</p>
@@ -439,7 +439,7 @@ function PricingPreview() {
               key={plan.name}
               className={`rounded-2xl border p-5 ${
                 plan.highlight
-                  ? "border-blue-500 bg-gradient-to-br from-blue-600 to-blue-500 text-white shadow-xl shadow-blue-500/30"
+                  ? "border-blue-500 bg-linear-to-br from-blue-600 to-blue-500 text-white shadow-xl shadow-blue-500/30"
                   : "border-border bg-white text-ink"
               } wow-rise-delay-3`}
             >
@@ -468,7 +468,7 @@ function PricingPreview() {
 function FinalCta() {
   return (
     <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-5 sm:py-20 md:px-8 wow-rise">
-      <div className="relative overflow-hidden rounded-3xl border border-blue-200 bg-gradient-to-br from-blue-50 via-white to-indigo-50 px-5 py-10 text-center sm:px-8 sm:py-14 md:px-14">
+      <div className="relative overflow-hidden rounded-3xl border border-blue-200 bg-linear-to-br from-blue-50 via-white to-indigo-50 px-5 py-10 text-center sm:px-8 sm:py-14 md:px-14">
         <div className="hero-aurora pointer-events-none absolute -left-12 top-0 h-56 w-56 rounded-full bg-brand/30 blur-3xl" />
         <div className="hero-aurora pointer-events-none absolute -bottom-10 right-0 h-56 w-56 rounded-full bg-brand/20 blur-3xl" />
         <div className="relative">

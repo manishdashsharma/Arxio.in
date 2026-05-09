@@ -55,7 +55,7 @@ function NavItem({ item, active, collapsed, workspaceLink }) {
       }`}
     >
       {active && (
-        <span className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r-full bg-blue-500" />
+        <span className="absolute left-0 top-1/2 h-5 w-0.75 -translate-y-1/2 rounded-r-full bg-blue-500" />
       )}
       <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${active ? "bg-blue-100" : "bg-slate-100 group-hover:bg-slate-200"}`}>
         {Icon && <Icon cls={iconCls} />}
@@ -160,7 +160,7 @@ export function CyberSidebar({
               type="button"
               onClick={() => navigate("/profile")}
               title={user?.name || "Profile"}
-              className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-[11px] font-bold text-white shadow-sm transition hover:opacity-90"
+              className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br from-blue-500 to-indigo-600 text-[11px] font-bold text-white shadow-sm transition hover:opacity-90"
             >
               {initial}
             </button>
@@ -182,7 +182,7 @@ export function CyberSidebar({
               onClick={() => navigate("/profile")}
               className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 transition hover:bg-slate-50"
             >
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-[11px] font-bold text-white shadow-sm">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-blue-500 to-indigo-600 text-[11px] font-bold text-white shadow-sm">
                 {initial}
               </span>
               <div className="min-w-0 flex-1 text-left">

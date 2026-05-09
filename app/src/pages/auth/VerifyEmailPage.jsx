@@ -80,7 +80,7 @@ export function VerifyEmailPage() {
   }
 
   return (
-    <main className="h-screen overflow-hidden bg-gradient-to-b from-slate-50 via-white to-blue-50/30 text-slate-900">
+    <main className="h-screen overflow-hidden bg-linear-to-b from-slate-50 via-white to-blue-50/30 text-slate-900">
       <div className="grid h-full lg:grid-cols-2">
         <AuthSidePanel mode="signup" />
         <section className="relative flex items-center justify-center px-5 py-6 sm:px-8">

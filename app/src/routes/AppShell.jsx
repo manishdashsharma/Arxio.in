@@ -59,7 +59,7 @@ export function AppShell() {
   }, [location.pathname]);
 
   return (
-    <main className="h-screen overflow-hidden bg-gradient-to-b from-arxio-bg to-white p-2 text-arxio-on-surface selection:bg-arxio-primary-container selection:text-white">
+    <main className="h-screen overflow-hidden bg-linear-to-b from-arxio-bg to-white p-2 text-arxio-on-surface selection:bg-arxio-primary-container selection:text-white">
       <div className="mb-2 flex items-center justify-between rounded-xl border border-arxio-outline-variant/15 bg-white px-3 py-2 md:hidden">
         <button
           type="button"
@@ -95,7 +95,7 @@ export function AppShell() {
 
       {mobileSidebarOpen ? (
         <div className="fixed inset-0 z-50 flex md:hidden">
-          <div className="h-full w-[86vw] max-w-[340px]">
+          <div className="h-full w-[86vw] max-w-85">
             <CyberSidebar
               user={user}
               onSignOut={signOut}

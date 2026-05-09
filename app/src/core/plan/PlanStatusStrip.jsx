@@ -44,7 +44,7 @@ export function PlanStatusStrip({ className = "", onUpgrade, upgradeLabel = "Upg
       {!isMaxTier && (
         <button
           type="button"
-          className="rounded-md bg-gradient-to-br from-arxio-primary-container to-arxio-inverse-primary px-3 py-1.5 text-[10px] font-black uppercase tracking-wide text-white transition hover:brightness-110"
+          className="rounded-md bg-linear-to-br from-arxio-primary-container to-arxio-inverse-primary px-3 py-1.5 text-[10px] font-black uppercase tracking-wide text-white transition hover:brightness-110"
           onClick={handleUpgrade}
         >
           {upgradeLabel}

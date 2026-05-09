@@ -197,7 +197,7 @@ export function WorkspaceChatPanel({ workspaceId, workspaceReady, chatAllowed, o
         )}
       </header>
 
-      <div ref={listRef} className="space-y-3 bg-gradient-to-b from-slate-50/60 to-white px-3 py-4 sm:px-4 md:px-5">
+      <div ref={listRef} className="space-y-3 bg-linear-to-b from-slate-50/60 to-white px-3 py-4 sm:px-4 md:px-5">
         <div className="flex items-center gap-2 pb-1">
           <div className="h-px flex-1 bg-slate-200" />
           <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">Conversation</p>
@@ -296,7 +296,7 @@ export function WorkspaceChatPanel({ workspaceId, workspaceReady, chatAllowed, o
           <button
             type="submit"
             disabled={!canSend}
-            className="rounded-full bg-gradient-to-br from-arxio-primary-container to-arxio-inverse-primary px-4 py-2 text-[10px] font-semibold uppercase tracking-widest text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-full bg-linear-to-br from-arxio-primary-container to-arxio-inverse-primary px-4 py-2 text-[10px] font-semibold uppercase tracking-widest text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {sending ? "Sending..." : "Send"}
           </button>

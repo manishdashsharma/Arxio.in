@@ -53,7 +53,7 @@ export function SignInPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-blue-50/30 text-slate-900">
+    <main className="min-h-screen bg-linear-to-b from-slate-50 via-white to-blue-50/30 text-slate-900">
       <div className="grid min-h-screen lg:grid-cols-2">
         <AuthSidePanel mode="signin" />
         <section className="relative flex items-center justify-center px-5 py-12 sm:px-8">
