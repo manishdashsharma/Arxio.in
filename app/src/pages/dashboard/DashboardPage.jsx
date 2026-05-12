@@ -73,13 +73,16 @@ export function DashboardPage() {
     setUploading(true);
     try {
       const result = await uploadPdf(file);
-      setLatestWorkspaceId(result?.workspace?.workspaceId || "");
+      const workspaceId = result?.workspace?.workspaceId || "";
+      setLatestWorkspaceId(workspaceId);
+      await processWorkspace(workspaceId);
       const successText = `Uploaded ${result?.workspace?.originalName || file.name} successfully.`;
       setUploadSuccess(successText);
       setCelebrationMessage(successText);
       setShowUploadCelebration(true);
       await refreshWorkspaceList(1, workspaceMeta.limit || 5);
       await plan.refresh();
+      navigate(`/workspace/${workspaceId}`);
     } catch (err) {
       setUploadError(err instanceof Error ? err.message : "Upload failed.");
     } finally {

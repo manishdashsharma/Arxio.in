@@ -6,6 +6,8 @@ generated/*
 **/__pycache__/
 **/*.pyc
 .env
+.env.local
+.env.production
 *.egg-info/
 .venv/
 node_modules/
