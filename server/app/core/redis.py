@@ -1,17 +1,12 @@
 import json
 from typing import Any
-from redis.asyncio import Redis, ConnectionPool
+from redis.asyncio import Redis
 from app.core.config import settings
 from app.core.logger import logger
 
-_pool: ConnectionPool | None = None
-
 
 def get_redis_client() -> Redis:
-    global _pool
-    if _pool is None:
-        _pool = ConnectionPool.from_url(settings.redis_url, decode_responses=True)
-    return Redis(connection_pool=_pool)
+    return Redis.from_url(settings.redis_url, decode_responses=True)
 
 
 async def cache_set(key: str, value: Any, ttl: int) -> None:
