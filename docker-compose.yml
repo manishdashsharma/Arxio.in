@@ -1,0 +1,64 @@
+networks:
+  proxy-network:
+    external: true
+
+volumes:
+  arxio_uploads:
+  arxio_generated:
+
+services:
+  api:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    image: arxio-api
+    container_name: arxio-api
+    restart: unless-stopped
+    env_file: ./server/.env
+    environment:
+      - UPLOADS_DIR=/app/uploads
+      - GENERATED_DIR=/app/generated
+    volumes:
+      - arxio_uploads:/app/uploads
+      - arxio_generated:/app/generated
+    networks:
+      - proxy-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  worker:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    image: arxio-api
+    container_name: arxio-worker
+    restart: unless-stopped
+    command: uv run celery -A app.workers.celery_app worker --loglevel=info --concurrency=2
+    env_file: ./server/.env
+    environment:
+      - UPLOADS_DIR=/app/uploads
+      - GENERATED_DIR=/app/generated
+    volumes:
+      - arxio_uploads:/app/uploads
+      - arxio_generated:/app/generated
+    networks:
+      - proxy-network
+    depends_on:
+      api:
+        condition: service_healthy
+
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: https://api.arxio.in
+    image: arxio-app
+    container_name: arxio-app
+    restart: unless-stopped
+    networks:
+      - proxy-network

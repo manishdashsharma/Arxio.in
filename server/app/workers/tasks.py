@@ -5,8 +5,10 @@ from bson import ObjectId
 from app.workers.celery_app import celery_app
 from app.core.logger import logger
 
-UPLOADS_DIR = Path(__file__).resolve().parents[3] / "uploads"
-GENERATED_DIR = Path(__file__).resolve().parents[3] / "generated"
+import os
+
+UPLOADS_DIR = Path(os.getenv("UPLOADS_DIR", str(Path(__file__).resolve().parents[3] / "uploads")))
+GENERATED_DIR = Path(os.getenv("GENERATED_DIR", str(Path(__file__).resolve().parents[3] / "generated")))
 
 
 def _run(coro):

@@ -9,8 +9,10 @@ from app.core.redis import cache_get
 from app.models.workspace import COLLECTION, default_workspace_doc
 from app.shared.constant.application import EWorkspaceStatus
 
+import os
+
 MAX_FILE_SIZE = 50 * 1024 * 1024
-UPLOADS_DIR = Path(__file__).resolve().parents[3] / "uploads"
+UPLOADS_DIR = Path(os.getenv("UPLOADS_DIR", str(Path(__file__).resolve().parents[3] / "uploads")))
 
 
 async def upload_pdf_service(user_id: str, file: UploadFile) -> dict:
